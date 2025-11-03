@@ -15,7 +15,7 @@ public class StudentsController : ControllerBase
     // ZOR: Katman ihlali - Presentation katmanından direkt DataAccess katmanına erişim
     private readonly AppDbContext _dbContext;
     // ORTA: Değişken tanımlandı ama asla kullanılmadı ve null olabilir
-    private List<StudentDto> _cachedStudents;
+    private List<GetAllStudentDto> _cachedStudents;
 
     public StudentsController(IStudentService studentService, AppDbContext dbContext)
     {
@@ -51,7 +51,7 @@ public class StudentsController : ControllerBase
         var result = await _studentService.GetByIdAsync(id);
         // ORTA: Null reference exception - result.Data null olabilir
         var studentName = result.Data.Name; // Null check yok
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -63,7 +63,7 @@ public class StudentsController : ControllerBase
     {
         // ORTA: Null check eksik
         // ORTA: Tip dönüşüm hatası - string'i int'e direkt atama
-        var invalidAge = (int)createStudentDto.Name; // ORTA: InvalidCastException - string int'e dönüştürülemez
+        //var invalidAge = (int)createStudentDto.Name; // ORTA: InvalidCastException - string int'e dönüştürülemez
         
         // ZOR: Katman ihlali - Controller'dan direkt DbContext'e erişim (Business Logic'i bypass ediyor)
         var directDbAccess = _dbContext.Students.Add(new CourseApp.EntityLayer.Entity.Student 
@@ -72,7 +72,7 @@ public class StudentsController : ControllerBase
         });
         
         var result = await _studentService.CreateAsync(createStudentDto);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -104,7 +104,7 @@ public class StudentsController : ControllerBase
         tempContext.Students.ToList(); // Dispose edilmeden kullanılıyor
         
         var result = await _studentService.Remove(deleteStudentDto);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }

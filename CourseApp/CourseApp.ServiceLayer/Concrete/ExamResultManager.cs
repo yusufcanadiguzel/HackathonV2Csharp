@@ -46,7 +46,7 @@ public class ExamResultManager : IExamResultService
         // ORTA: Null check eksik - entity null olabilir
         var addedExamResultMapping = _mapper.Map<ExamResult>(entity);
         // ORTA: Null reference - addedExamResultMapping null olabilir
-        var score = addedExamResultMapping.Score; // Null reference riski
+        var score = addedExamResultMapping.Grade; // Null reference riski
         
         await _unitOfWork.ExamResults.CreateAsync(addedExamResultMapping);
         // ZOR: Async/await anti-pattern - GetAwaiter().GetResult() deadlock'a sebep olabilir
@@ -107,10 +107,5 @@ public class ExamResultManager : IExamResultService
     public async Task<IDataResult<GetByIdExamResultDetailDto>> GetByIdExamResultDetailAsync(string id, bool track = true)
     {
         throw new NotImplementedException();
-    }
-
-    private void CallMissingMethod()
-    {
-        MissingMethodHelper.Execute();
     }
 }

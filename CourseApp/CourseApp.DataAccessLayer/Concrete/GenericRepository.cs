@@ -15,8 +15,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
         _dbSet = _context.Set<T>(); 
     }
 
-
-
     public IQueryable<T> GetAll(bool track = true)
     {
         var query = _dbSet.AsQueryable();
@@ -60,11 +58,4 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
         _dbSet.Update(entity);
     }
-
-    public void UseUndefinedType()
-    {
-        var x = new UndefinedRepositoryType();
-        x.Process();
-    }
-
 }

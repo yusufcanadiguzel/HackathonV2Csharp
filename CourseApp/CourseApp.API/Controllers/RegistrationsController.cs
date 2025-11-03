@@ -19,7 +19,7 @@ public class RegistrationsController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = await _registrationService.GetAllAsync();
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -30,7 +30,7 @@ public class RegistrationsController : ControllerBase
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _registrationService.GetByIdAsync(id);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -79,7 +79,7 @@ public class RegistrationsController : ControllerBase
     public async Task<IActionResult> Update([FromBody] UpdatedRegistrationDto updatedRegistrationDto)
     {
         var result = await _registrationService.Update(updatedRegistrationDto);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -90,7 +90,7 @@ public class RegistrationsController : ControllerBase
     public async Task<IActionResult> Delete([FromBody] DeleteRegistrationDto deleteRegistrationDto)
     {
         var result = await _registrationService.Remove(deleteRegistrationDto);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
