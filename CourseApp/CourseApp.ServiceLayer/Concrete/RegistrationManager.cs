@@ -52,8 +52,7 @@ public class RegistrationManager : IRegistrationService
             return new SuccessResult(ConstantsMessages.RegistrationCreateSuccessMessage);
         }
 
-        // KOLAY: Noktalı virgül eksikliği
-        return new ErrorResult(ConstantsMessages.RegistrationCreateFailedMessage) // TYPO: ; eksik
+        return new ErrorResult(ConstantsMessages.RegistrationCreateFailedMessage);
     }
 
     public async Task<IResult> Remove(DeleteRegistrationDto entity)

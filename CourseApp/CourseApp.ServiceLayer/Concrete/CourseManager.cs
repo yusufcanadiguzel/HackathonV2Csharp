@@ -132,7 +132,7 @@ public class CourseManager : ICourseService
         var courseListDetailList = await _unitOfWork.Courses.GetAllCourseDetail(false).ToListAsync();
         
         // ZOR: N+1 - Her course için Instructor ayrı sorgu ile çekiliyor (x.Instructor?.Name)
-        var courseDetailDtoList  = courseListDetailList.Select(x => new NonExistentType // KOLAY: Yanlış tip - GetAllCourseDetailDto olmalıydı
+        var courseDetailDtoList  = courseListDetailList.Select(x => new GetAllCourseDetailDto
         {
             CourseName = x.CourseName,
             StartDate = x.StartDate,
