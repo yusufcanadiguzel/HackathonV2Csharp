@@ -2,6 +2,7 @@
 
 public static class ConstantsMessages
 {
+    // Course Success Messages
     public const string CourseListSuccessMessage = "Kurslar veri tabanından başarılı bir şekilde listelendi";
     public const string CourseGetByIdSuccessMessage = "Kurs başarılı bir şekilde bulundu";
     public const string CourseCreateSuccessMessage = "Kurs başarılı bir şekilde oluşturuldu";
@@ -14,6 +15,9 @@ public static class ConstantsMessages
     public const string CourseCreateFailedMessage = "Kurs oluşturulurken bir hata oluştu";
     public const string CourseUpdateFailedMessage = "Kurs güncellenirken bir hata oluştu";
     public const string CourseDeleteFailedMessage = "Kurs silinirken bir hata oluştu";
+
+    // Course Validation Messages
+    public const string CourseNotNullMessage = "Kurs bilgileri boş olamaz";
 
     // ExamResult Success Messages
     public const string ExamResultListSuccessMessage = "Sınav sonuçları veri tabanından başarılı bir şekilde listelendi";
@@ -85,7 +89,6 @@ public static class ConstantsMessages
     public const string StudentUpdateFailedMessage = "Öğrenci güncellenirken bir hata oluştu";
     public const string StudentDeleteFailedMessage = "Öğrenci silinirken bir hata oluştu";
 
-
     // Exam Success Messages
     public const string ExamListSuccessMessage = "Sınavlar veri tabanından başarılı bir şekilde listelendi";
     public const string ExamGetByIdSuccessMessage = "Sınav başarılı bir şekilde bulundu";
@@ -100,10 +103,9 @@ public static class ConstantsMessages
     public const string ExamUpdateFailedMessage = "Sınav güncellenirken bir hata oluştu";
     public const string ExamDeleteFailedMessage = "Sınav silinirken bir hata oluştu";
 
-
+    // Course Detail Success Messages
     public const string CourseDetailsFetchedSuccessfully = "Kurs detayları başarıyla getirildi.";
+
+    // Course Detail Error Messages
     public const string CourseDetailsFetchFailed = "Kurs detayları getirilemedi.";
-
-
-
 }
