@@ -68,14 +68,14 @@ public class LessonsController : ControllerBase
         // ORTA: Index out of range - lessonName boş/null ise
         var firstChar = lessonName[0]; // IndexOutOfRangeException riski
         
-        // KOLAY: Metod adı yanlış yazımı - CreateAsync yerine CreatAsync
-        var result = await _lessonService.CreatAsync(createLessonDto); // TYPO: Create yerine Creat
-        if (result.Success)
+        var result = await _lessonService.CreateAsync(createLessonDto);
+
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
-        // KOLAY: Noktalı virgül eksikliği
-        return BadRequest(result) // TYPO: ; eksik
+        
+        return BadRequest(result);
     }
 
     [HttpPut]

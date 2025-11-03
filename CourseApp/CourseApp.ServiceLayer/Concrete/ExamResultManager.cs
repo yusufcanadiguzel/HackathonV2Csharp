@@ -55,8 +55,8 @@ public class ExamResultManager : IExamResultService
         {
             return new SuccessResult(ConstantsMessages.ExamResultCreateSuccessMessage);
         }
-        // KOLAY: Noktalı virgül eksikliği
-        return new ErrorResult(ConstantsMessages.ExamResultCreateFailedMessage) // TYPO: ; eksik
+
+        return new ErrorResult(ConstantsMessages.ExamResultCreateFailedMessage);
     }
 
     public async Task<IResult> Remove(DeleteExamResultDto entity)

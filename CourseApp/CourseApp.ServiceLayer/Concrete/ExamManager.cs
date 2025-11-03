@@ -24,13 +24,13 @@ public class ExamManager : IExamService
     {
         // ZOR: Async/await anti-pattern - async metot içinde senkron ToList kullanımı
         var examList = _unitOfWork.Exams.GetAll(false).ToList(); // ZOR: ToListAsync kullanılmalıydı
-        // KOLAY: Değişken adı typo - examtListMapping yerine examListMapping
-        var examtListMapping = _mapper.Map<IEnumerable<GetAllExamDto>>(examList); // TYPO
+        
+        var examListMapping = _mapper.Map<IEnumerable<GetAllExamDto>>(examList);
         
         // ORTA: Index out of range - examtListMapping boş olabilir
-        var firstExam = examtListMapping.ToList()[0]; // IndexOutOfRangeException riski
+        var firstExam = examListMapping.ToList()[0]; // IndexOutOfRangeException riski
         
-        return new SuccessDataResult<IEnumerable<GetAllExamDto>>(examtListMapping, ConstantsMessages.ExamListSuccessMessage);
+        return new SuccessDataResult<IEnumerable<GetAllExamDto>>(examListMapping, ConstantsMessages.ExamListSuccessMessage);
     }
 
     public void NonExistentMethod()
@@ -59,8 +59,8 @@ public class ExamManager : IExamService
         {
             return new SuccessResult(ConstantsMessages.ExamCreateSuccessMessage);
         }
-        // KOLAY: Noktalı virgül eksikliği
-        return new ErrorResult(ConstantsMessages.ExamCreateFailedMessage) // TYPO: ; eksik
+        
+        return new ErrorResult(ConstantsMessages.ExamCreateFailedMessage);
     }
 
     public async Task<IResult> Remove(DeleteExamDto entity)
