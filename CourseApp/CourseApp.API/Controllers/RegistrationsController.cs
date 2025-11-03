@@ -41,7 +41,7 @@ public class RegistrationsController : ControllerBase
     public async Task<IActionResult> GetAllDetail()
     {
         var result = await _registrationService.GetAllRegistrationDetailAsync();
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -52,7 +52,7 @@ public class RegistrationsController : ControllerBase
     public async Task<IActionResult> GetByIdDetail(string id)
     {
         var result = await _registrationService.GetByIdRegistrationDetailAsync(id);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -67,8 +67,8 @@ public class RegistrationsController : ControllerBase
         var invalidPrice = (int)createRegistrationDto.Price; // ORTA: InvalidCastException
         
         var result = await _registrationService.CreateAsync(createRegistrationDto);
-        // KOLAY: Değişken adı typo - result yerine rsult
-        if (rsult.Success) // TYPO: result yerine rsult
+        
+        if (result.IsSuccess)
         {
             return Ok(result);
         }

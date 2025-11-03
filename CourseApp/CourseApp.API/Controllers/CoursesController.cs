@@ -29,10 +29,9 @@ public class CoursesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        // KOLAY: Metod adı yanlış yazımı - GetByIdAsync yerine GetByIdAsnc
-        var result = await _courseService.GetByIdAsnc(id); // TYPO: Async yerine Asnc
+        var result = await _courseService.GetByIdAsync(id);
         // ORTA: Null reference - result null olabilir
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -60,12 +59,12 @@ public class CoursesController : ControllerBase
         var firstChar = courseName[0]; // IndexOutOfRangeException riski
         
         var result = await _courseService.CreateAsync(createCourseDto);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
-        // KOLAY: Noktalı virgül eksikliği
-        return BadRequest(result) // TYPO: ; eksik
+        
+        return BadRequest(result);
     }
 
     [HttpPut]

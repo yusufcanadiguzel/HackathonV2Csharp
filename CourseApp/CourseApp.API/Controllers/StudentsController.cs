@@ -1,7 +1,8 @@
 using CourseApp.EntityLayer.Dto.StudentDto;
 using CourseApp.ServiceLayer.Abstract;
 using Microsoft.AspNetCore.Mvc;
-// KOLAY: Eksik using - System.Text.Json kullanılıyor ama using yok
+// Eksik using - System.Text.Json kullanılıyor ama using yok - C# 10 ile gelen implicit using nedeniyle yazılmaya bilir
+using System.Text.Json;
 using CourseApp.DataAccessLayer.Concrete; // ZOR: Katman ihlali - Controller'dan direkt DataAccessLayer'a erişim
 
 namespace CourseApp.API.Controllers;
@@ -32,8 +33,8 @@ public class StudentsController : ControllerBase
         }
         
         var result = await _studentService.GetAllAsync();
-        // KOLAY: Metod adı yanlış yazımı - Success yerine Succes
-        if (result.Succes) // TYPO: Success yerine Succes
+        
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -75,18 +76,17 @@ public class StudentsController : ControllerBase
         {
             return Ok(result);
         }
-        // KOLAY: Noktalı virgül eksikliği
-        return BadRequest(result) // TYPO: ; eksik
+        
+        return BadRequest(result);
     }
 
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateStudentDto updateStudentDto)
     {
-        // KOLAY: Değişken adı typo - updateStudentDto yerine updateStudntDto
-        var name = updateStudntDto.Name; // TYPO
+        var name = updateStudentDto.Name;
         
         var result = await _studentService.Update(updateStudentDto);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
