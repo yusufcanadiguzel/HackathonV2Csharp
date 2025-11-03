@@ -1,0 +1,37 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build sonuçları
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Tt]emp/
+TestResults/
+*.cache
+*.vsidx
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+
+# Rider / JetBrains
+.idea/
+*.iml
+
+# Visual Studio Code
+.vscode/
+
+# Diğer
+*.dll
+*.exe
+*.pdb
+*.dbmdl
+*.bak
+*.FileListAbsolute.txt
+*.AssemblyInfo.cs
