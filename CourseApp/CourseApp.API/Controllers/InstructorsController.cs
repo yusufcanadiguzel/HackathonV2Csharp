@@ -19,7 +19,7 @@ public class InstructorsController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = await _instructorService.GetAllAsync();
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -30,7 +30,7 @@ public class InstructorsController : ControllerBase
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _instructorService.GetByIdAsync(id);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -47,10 +47,10 @@ public class InstructorsController : ControllerBase
         var firstChar = instructorName[0]; // IndexOutOfRangeException riski
         
         // ORTA: Tip dönüşüm hatası - string'i int'e direkt cast
-        var invalidAge = (int)instructorName; // ORTA: InvalidCastException
+        //var invalidAge = (int)instructorName; // ORTA: InvalidCastException
         
         var result = await _instructorService.CreateAsync(createdInstructorDto);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -61,7 +61,7 @@ public class InstructorsController : ControllerBase
     public async Task<IActionResult> Update([FromBody] UpdatedInstructorDto updatedInstructorDto)
     {
         var result = await _instructorService.Update(updatedInstructorDto);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -72,7 +72,7 @@ public class InstructorsController : ControllerBase
     public async Task<IActionResult> Delete([FromBody] DeletedInstructorDto deletedInstructorDto)
     {
         var result = await _instructorService.Remove(deletedInstructorDto);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }

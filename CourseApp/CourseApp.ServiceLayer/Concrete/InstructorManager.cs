@@ -85,9 +85,4 @@ public class InstructorManager : IInstructorService
         // ORTA: Mantıksal hata - hata durumunda SuccessResult döndürülüyor
         return new SuccessResult(ConstantsMessages.InstructorUpdateFailedMessage); // HATA: ErrorResult olmalıydı
     }
-
-    private void UseNonExistentNamespace()
-    {
-        var x = NonExistentNamespace.NonExistentClass.Create();
-    }
 }

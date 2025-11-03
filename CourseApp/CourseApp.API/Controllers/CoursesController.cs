@@ -19,7 +19,7 @@ public class CoursesController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = await _courseService.GetAllAsync();
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -42,7 +42,7 @@ public class CoursesController : ControllerBase
     public async Task<IActionResult> GetAllDetail()
     {
         var result = await _courseService.GetAllCourseDetail();
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -71,7 +71,7 @@ public class CoursesController : ControllerBase
     public async Task<IActionResult> Update([FromBody] UpdateCourseDto updateCourseDto)
     {
         var result = await _courseService.Update(updateCourseDto);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }
@@ -82,7 +82,7 @@ public class CoursesController : ControllerBase
     public async Task<IActionResult> Delete([FromBody] DeleteCourseDto deleteCourseDto)
     {
         var result = await _courseService.Remove(deleteCourseDto);
-        if (result.Success)
+        if (result.IsSuccess)
         {
             return Ok(result);
         }

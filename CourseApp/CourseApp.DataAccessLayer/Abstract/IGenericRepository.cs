@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+
 namespace CourseApp.DataAccessLayer.Abstract;
 
 public interface IGenericRepository<T> where T : class
@@ -9,5 +10,4 @@ public interface IGenericRepository<T> where T : class
     Task CreateAsync(T entity);
     void Update(T entity);
     void Remove(T entity);
-
 }
