@@ -1,5 +1,7 @@
 using CourseApp.EntityLayer.Dto.ExamResultDto;
 using CourseApp.ServiceLayer.Abstract;
+using CourseApp.ServiceLayer.Utilities.Constants;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseApp.API.Controllers;
@@ -21,7 +23,7 @@ public class ExamResultsController : ControllerBase
         // ZOR: N+1 Problemi - Her examResult için ayrı sorgu
         var result = await _examResultService.GetAllAsync();
 
-        // TAMAMLANDI-ORTA: Null reference - Business katmanında null olması durumunda ErrorDataResult dönülüyor
+        // TAMAMLANDI-ORTA: Null reference - Gerekli null check manager'a eklendi.
         if (result.IsSuccess && result.Data != null)
         {
             // ZOR: N+1 - Her examResult için detay çekiliyor
@@ -73,7 +75,11 @@ public class ExamResultsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateExamResultDto createExamResultDto)
     {
+        if (createExamResultDto is null)
+            return BadRequest(ConstantsMessages.ExamResultNotNullMessage);
+
         var result = await _examResultService.CreateAsync(createExamResultDto);
+
         if (result.IsSuccess)
         {
             return Ok(result);
@@ -84,7 +90,7 @@ public class ExamResultsController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateExamResultDto updateExamResultDto)
     {
-        var result = await _examResultService.Update(updateExamResultDto);
+        var result = await _examResultService.UpdateAsync(updateExamResultDto);
         if (result.IsSuccess)
         {
             return Ok(result);
@@ -95,7 +101,7 @@ public class ExamResultsController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> Delete([FromBody] DeleteExamResultDto deleteExamResultDto)
     {
-        var result = await _examResultService.Remove(deleteExamResultDto);
+        var result = await _examResultService.RemoveAsync(deleteExamResultDto);
         if (result.IsSuccess)
         {
             return Ok(result);

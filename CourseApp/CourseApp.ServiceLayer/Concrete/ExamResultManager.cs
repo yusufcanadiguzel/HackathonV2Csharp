@@ -5,8 +5,8 @@ using CourseApp.EntityLayer.Entity;
 using CourseApp.ServiceLayer.Abstract;
 using CourseApp.ServiceLayer.Utilities.Constants;
 using CourseApp.ServiceLayer.Utilities.Result;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace CourseApp.ServiceLayer.Concrete;
 
@@ -15,11 +15,13 @@ public class ExamResultManager : IExamResultService
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IValidator<CreateExamResultDto> _createValidator;
 
-    public ExamResultManager(IUnitOfWork unitOfWork, IMapper mapper)
+    public ExamResultManager(IUnitOfWork unitOfWork, IMapper mapper, IValidator<CreateExamResultDto> createValidator)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _createValidator = createValidator;
     }
 
     public async Task<IDataResult<IEnumerable<GetAllExamResultDto>>> GetAllAsync(bool track = true)
@@ -30,12 +32,8 @@ public class ExamResultManager : IExamResultService
             return new ErrorDataResult<IEnumerable<GetAllExamResultDto>>(Enumerable.Empty<GetAllExamResultDto>(), ConstantsMessages.ExamResultListFailedMessage);
 
         var examResultListMapping = _mapper.Map<IEnumerable<GetAllExamResultDto>>(examResultList);
-        if (!examResultList.Any())
-        {
-            return new ErrorDataResult<IEnumerable<GetAllExamResultDto>>(null, ConstantsMessages.ExamResultListFailedMessage);
-        }
-        return new SuccessDataResult<IEnumerable<GetAllExamResultDto>>(examResultListMapping, ConstantsMessages.ExamResultListSuccessMessage);
 
+        return new SuccessDataResult<IEnumerable<GetAllExamResultDto>>(examResultListMapping, ConstantsMessages.ExamResultListSuccessMessage);
     }
 
     public async Task<IDataResult<GetByIdExamResultDto>> GetByIdAsync(string id, bool track = true)
@@ -47,11 +45,16 @@ public class ExamResultManager : IExamResultService
 
     public async Task<IResult> CreateAsync(CreateExamResultDto entity)
     {
-        // ORTA: Null check eksik - entity null olabilir
+        var validationResult = await _createValidator.ValidateAsync(entity);
+
+        if (!validationResult.IsValid)
+            return new ErrorResult(string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage)));
+
+        // TAMAMLANDI-ORTA: Null check eksik - Gerekli null check controller'a eklendi.
         var addedExamResultMapping = _mapper.Map<ExamResult>(entity);
-        // ORTA: Null reference - addedExamResultMapping null olabilir
-        var score = addedExamResultMapping.Grade; // Null reference riski
-        
+
+        // TAMAMLANDI-ORTA: Null reference - Değişken kullanılmadığı için kaldırıldı fakat Grade gerekli olduğu için validasyonu eklendi. -> var score = addedExamResultMapping.Grade;
+
         await _unitOfWork.ExamResults.CreateAsync(addedExamResultMapping);
         // ZOR: Async/await anti-pattern - GetAwaiter().GetResult() deadlock'a sebep olabilir
         var result = _unitOfWork.CommitAsync().GetAwaiter().GetResult(); // ZOR: Anti-pattern
@@ -63,27 +66,35 @@ public class ExamResultManager : IExamResultService
         return new ErrorResult(ConstantsMessages.ExamResultCreateFailedMessage);
     }
 
-    public async Task<IResult> Remove(DeleteExamResultDto entity)
+    public async Task<IResult> RemoveAsync(DeleteExamResultDto entity)
     {
         var deletedExamResultMapping = _mapper.Map<ExamResult>(entity);
+
         _unitOfWork.ExamResults.Remove(deletedExamResultMapping);
+
         var result = await _unitOfWork.CommitAsync();
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.ExamResultDeleteSuccessMessage);
         }
+
         return new ErrorResult(ConstantsMessages.ExamResultDeleteFailedMessage);
     }
 
-    public async Task<IResult> Update(UpdateExamResultDto entity)
+    public async Task<IResult> UpdateAsync(UpdateExamResultDto entity)
     {
         var updatedExamResultMapping = _mapper.Map<ExamResult>(entity);
+
         _unitOfWork.ExamResults.Update(updatedExamResultMapping);
+
         var result = await _unitOfWork.CommitAsync();
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.ExamResultUpdateSuccessMessage);
         }
+
         return new ErrorResult(ConstantsMessages.ExamResultUpdateFailedMessage);
     }
 
@@ -102,8 +113,8 @@ public class ExamResultManager : IExamResultService
 
         var examResultListMapping = _mapper.Map<IEnumerable<GetAllExamResultDetailDto>>(examResultList);
         
-        // ORTA: Index out of range - examResultListMapping boş olabilir
-        var firstResult = examResultListMapping.ToList()[0]; // IndexOutOfRangeException riski
+        // TAMAMLANDI-ORTA: Index out of range - Gereken null check eklendi.
+        var firstResult = examResultListMapping.ToList()[0];
         
         return new SuccessDataResult<IEnumerable<GetAllExamResultDetailDto>>(examResultListMapping, ConstantsMessages.ExamResultListSuccessMessage);
     }

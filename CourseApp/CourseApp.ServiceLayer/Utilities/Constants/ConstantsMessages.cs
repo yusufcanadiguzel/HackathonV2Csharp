@@ -34,6 +34,8 @@ public static class ConstantsMessages
     public const string ExamResultDeleteFailedMessage = "Sınav sonucu silinirken bir hata oluştu";
 
     // ExamResult Validation Messages
+    public const string ExamResultNotNullMessage = "Sınav sonucu bilgileri boş olamaz";
+    public const string ExamResultGradeNotEmptyValidationMessage = "Sınav sonucu notu boş olamaz";
 
     // Instructor Success Messages
     public const string InstructorListSuccessMessage = "Eğitmenler veri tabanından başarılı bir şekilde listelendi";
