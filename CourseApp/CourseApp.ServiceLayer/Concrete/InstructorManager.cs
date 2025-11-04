@@ -32,15 +32,21 @@ public class InstructorManager : IInstructorService
 
     public async Task<IDataResult<GetByIdInstructorDto>> GetByIdAsync(string id, bool track = true)
     {
-        // ORTA: Null check eksik - id null/empty olabilir
-        // ORTA: Index out of range - id çok kısa olabilir
-        var idPrefix = id[5]; // IndexOutOfRangeException riski
-        
+        // TAMAMLANDI-ORTA: Null check eksik - Gerekli null check controller'a eklendi.
+
+        // TAMAMLANDI-ORTA: Index out of range - Değişken kullanılmadığı için kaldırıldı. -> var idPrefix = id[5];
+
         var hasInstructor = await _unitOfWork.Instructors.GetByIdAsync(id, false);
-        // ORTA: Null reference - hasInstructor null olabilir ama kontrol edilmiyor
+
+        // TAMAMLANDI-ORTA: Null reference - Gerekli null check eklendi.
+        if (hasInstructor is null)
+            return new ErrorDataResult<GetByIdInstructorDto>(null, ConstantsMessages.InstructorGetByIdFailedMessage);
+
+        // TAMAMLANDI-ORTA: Null reference - Sorunun kaynağı olabilecek hasInstructor null check ile kontrol edildi.
         var hasInstructorMapping = _mapper.Map<GetByIdInstructorDto>(hasInstructor);
-        // ORTA: Null reference - hasInstructorMapping null olabilir
-        var name = hasInstructorMapping.Name; // Null reference riski
+
+        // TAMAMLANDI: Null reference - Değişken kullanılmadığı için kaldırıldı fakat gerekmesi durumunda sorun Name? değiştirilerek ve Create esnasında yapılacak validasyon ile çözülebilir. -> var name = hasInstructorMapping.Name;
+
         return new SuccessDataResult<GetByIdInstructorDto>(hasInstructorMapping, ConstantsMessages.InstructorGetByIdSuccessMessage);
     }
 
@@ -57,7 +63,7 @@ public class InstructorManager : IInstructorService
         return new ErrorResult(ConstantsMessages.InstructorCreateFailedMessage);
     }
 
-    public async Task<IResult> Remove(DeletedInstructorDto entity)
+    public async Task<IResult> RemoveAsync(DeletedInstructorDto entity)
     {
         var deletedInstructor = _mapper.Map<Instructor>(entity);
         _unitOfWork.Instructors.Remove(deletedInstructor);
@@ -69,20 +75,22 @@ public class InstructorManager : IInstructorService
         return new ErrorResult(ConstantsMessages.InstructorDeleteFailedMessage);
     }
 
-    public async Task<IResult> Update(UpdatedInstructorDto entity)
+    public async Task<IResult> UpdateAsync(UpdatedInstructorDto entity)
     {
-        // ORTA: Null check eksik - entity null olabilir
+        // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontrol controller'a eklendi.
         var updatedInstructor = _mapper.Map<Instructor>(entity);
-        // ORTA: Null reference - updatedInstructor null olabilir
-        var instructorName = updatedInstructor.Name; // Null reference riski
-        
+
+        // TAMAMLANDI: Null reference - Değişken kullanılmadığı için kaldırıldı fakat gerekmesi durumunda sorun Name? değiştirilerek ve Create esnasında yapılacak validasyon ile çözülebilir. ->  var instructorName = updatedInstructor.Name;
+
         _unitOfWork.Instructors.Update(updatedInstructor);
+
         var result = await _unitOfWork.CommitAsync();
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.InstructorUpdateSuccessMessage);
         }
-        // ORTA: Mantıksal hata - hata durumunda SuccessResult döndürülüyor
-        return new SuccessResult(ConstantsMessages.InstructorUpdateFailedMessage); // HATA: ErrorResult olmalıydı
+        // TAMAMLANDI-ORTA: Mantıksal hata - Doğru Result türü döndürüldü.
+        return new ErrorResult(ConstantsMessages.InstructorUpdateFailedMessage);
     }
 }

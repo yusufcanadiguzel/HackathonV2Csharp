@@ -9,6 +9,6 @@ public interface IInstructorService
     Task<IDataResult<IEnumerable<GetAllInstructorDto>>> GetAllAsync(bool track = true);
     Task<IDataResult<GetByIdInstructorDto>> GetByIdAsync(string id, bool track = true);
     Task<IResult> CreateAsync(CreatedInstructorDto entity);
-    Task<IResult> Update(UpdatedInstructorDto entity);
-    Task<IResult> Remove(DeletedInstructorDto entity);
+    Task<IResult> UpdateAsync(UpdatedInstructorDto entity);
+    Task<IResult> RemoveAsync(DeletedInstructorDto entity);
 }

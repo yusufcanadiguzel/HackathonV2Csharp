@@ -33,7 +33,11 @@ public class InstructorsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
+        if (string.IsNullOrWhiteSpace(id))
+            return BadRequest(ConstantsMessages.IdNotFoundMessage);
+
         var result = await _instructorService.GetByIdAsync(id);
+
         if (result.IsSuccess)
         {
             return Ok(result);
@@ -70,9 +74,13 @@ public class InstructorsController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] UpdatedInstructorDto updatedInstructorDto)
+    public async Task<IActionResult> UpdateAsync([FromBody] UpdatedInstructorDto updatedInstructorDto)
     {
-        var result = await _instructorService.Update(updatedInstructorDto);
+        if (updatedInstructorDto is null)
+            return BadRequest(ConstantsMessages.InstructorNotNullMessage);
+
+        var result = await _instructorService.UpdateAsync(updatedInstructorDto);
+
         if (result.IsSuccess)
         {
             return Ok(result);
@@ -81,9 +89,9 @@ public class InstructorsController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete([FromBody] DeletedInstructorDto deletedInstructorDto)
+    public async Task<IActionResult> DeleteAsync([FromBody] DeletedInstructorDto deletedInstructorDto)
     {
-        var result = await _instructorService.Remove(deletedInstructorDto);
+        var result = await _instructorService.RemoveAsync(deletedInstructorDto);
         if (result.IsSuccess)
         {
             return Ok(result);
