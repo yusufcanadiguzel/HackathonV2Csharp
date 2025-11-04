@@ -39,11 +39,11 @@ public class RegistrationManager : IRegistrationService
 
     public async Task<IResult> CreateAsync(CreateRegistrationDto entity)
     {
-        // ORTA: Null check eksik - entity null olabilir
+        // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontrol controller'a eklendi.
         var createdRegistration = _mapper.Map<Registration>(entity);
-        // ORTA: Null reference - createdRegistration null olabilir
-        var registrationPrice = createdRegistration.Price; // Null reference riski
-        
+
+        // TAMAMLANDI-ORTA: Null reference - Değişken kullanılmadığı için kaldırıldı fakat ihtiyaç olması durumunda kullanılacak validator hazırlandı. -> var registrationPrice = createdRegistration.Price;
+
         // ZOR: Async/await anti-pattern - GetAwaiter().GetResult() deadlock'a sebep olabilir
         _unitOfWork.Registrations.CreateAsync(createdRegistration).GetAwaiter().GetResult(); // ZOR: Anti-pattern
         var result = await _unitOfWork.CommitAsync();
@@ -55,7 +55,7 @@ public class RegistrationManager : IRegistrationService
         return new ErrorResult(ConstantsMessages.RegistrationCreateFailedMessage);
     }
 
-    public async Task<IResult> Remove(DeleteRegistrationDto entity)
+    public async Task<IResult> RemoveAsync(DeleteRegistrationDto entity)
     {
         var deletedRegistration = _mapper.Map<Registration>(entity);
         _unitOfWork.Registrations.Remove(deletedRegistration);
@@ -67,22 +67,24 @@ public class RegistrationManager : IRegistrationService
         return new ErrorResult(ConstantsMessages.RegistrationDeleteFailedMessage);
     }
 
-    public async Task<IResult> Update(UpdatedRegistrationDto entity)
+    public async Task<IResult> UpdateAsync(UpdatedRegistrationDto entity)
     {
-        // ORTA: Null check eksik - entity null olabilir
+        // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontrol controller'a eklendi.
         var updatedRegistration = _mapper.Map<Registration>(entity);
-        
-        // ORTA: Tip dönüşüm hatası - decimal'i int'e direkt cast
-        var invalidPrice = (int)updatedRegistration.Price; // ORTA: InvalidCastException
-        
+
+        // TAMAMLANDI-ORTA: Tip dönüşüm hatası - Değişken herhangi bir işlemde kullanılmadığı için kaldırıldı. -> var invalidPrice = (int)updatedRegistration.Price;
+
         _unitOfWork.Registrations.Update(updatedRegistration);
+
         var result = await _unitOfWork.CommitAsync();
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.RegistrationUpdateSuccessMessage);
         }
-        // ORTA: Mantıksal hata - hata durumunda SuccessResult döndürülüyor
-        return new SuccessResult(ConstantsMessages.RegistrationUpdateFailedMessage); // HATA: ErrorResult olmalıydı
+
+        // TAMAMLANDI-ORTA: Mantıksal hata - Doğru dönüş türü ile güncellendi.
+        return new ErrorResult(ConstantsMessages.RegistrationUpdateFailedMessage);
     }
 
     public async Task<IDataResult<IEnumerable<GetAllRegistrationDetailDto>>> GetAllRegistrationDetailAsync(bool track = true)
@@ -93,21 +95,20 @@ public class RegistrationManager : IRegistrationService
         // ZOR: N+1 - Her registration için Course ve Student ayrı sorgu ile çekiliyor
         // Örnek: registration.Course?.CourseName her iterasyonda DB sorgusu
         
-        if(!registrationData.Any())
-        {
-            return new ErrorDataResult<IEnumerable<GetAllRegistrationDetailDto>>(null,ConstantsMessages.RegistrationListFailedMessage);
-        }
+        if(registrationData == null || !registrationData.Any())
+            return new ErrorDataResult<IEnumerable<GetAllRegistrationDetailDto>>(null, ConstantsMessages.RegistrationListFailedMessage);
 
         var registrationDataMapping = _mapper.Map<IEnumerable<GetAllRegistrationDetailDto>>(registrationData);
-        
-        // ORTA: Index out of range - registrationDataMapping boş olabilir
-        var firstRegistration = registrationDataMapping.ToList()[0]; // IndexOutOfRangeException riski
+
+        // TAMAMLANDI-ORTA: Index out of range - Gerekli kontrol eklendi.
+        var firstRegistration = registrationDataMapping.ToList()[0];
         
         return new SuccessDataResult<IEnumerable<GetAllRegistrationDetailDto>>(registrationDataMapping, ConstantsMessages.RegistrationListSuccessMessage);  
     }
 
     public async Task<IDataResult<GetByIdRegistrationDetailDto>> GetByIdRegistrationDetailAsync(string id, bool track = true)
     {
+        // ZOR: Eksik implementasyon - Metodun içeriği eksik
         throw new NotImplementedException();
     }
 }

@@ -3,10 +3,12 @@ using CourseApp.BusinessLayer.Validation.FluentValidation.Exam;
 using CourseApp.BusinessLayer.Validation.FluentValidation.ExamResult;
 using CourseApp.BusinessLayer.Validation.FluentValidation.Instructor;
 using CourseApp.BusinessLayer.Validation.FluentValidation.Lesson;
+using CourseApp.BusinessLayer.Validation.FluentValidation.Registration;
 using CourseApp.EntityLayer.Dto.ExamDto;
 using CourseApp.EntityLayer.Dto.ExamResultDto;
 using CourseApp.EntityLayer.Dto.InstructorDto;
 using CourseApp.EntityLayer.Dto.LessonDto;
+using CourseApp.EntityLayer.Dto.RegistrationDto;
 using FluentValidation;
 
 namespace CourseApp.BusinessLayer.DependencyResolvers.Autofac
@@ -26,6 +28,9 @@ namespace CourseApp.BusinessLayer.DependencyResolvers.Autofac
 
             // ExamResult Service Registration
             builder.RegisterType<CreateExamResultDtoValidator>().As<IValidator<CreateExamResultDto>>().InstancePerLifetimeScope();
+
+            // Registration Service Registration
+            builder.RegisterType<CreateRegistrationDtoValidator>().As<IValidator<CreateRegistrationDto>>().InstancePerLifetimeScope();
         }
     }
 }

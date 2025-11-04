@@ -89,6 +89,7 @@ public static class ConstantsMessages
 
     // Registration Validation Messages
     public const string RegistrationNotNullMessage = "Kayıt bilgileri boş olamaz";
+    public const string RegistrationPriceNotEmptyValidationMessage = "Kayıt ücreti boş olamaz";
 
     // Student Success Messages
     public const string StudentListSuccessMessage = "Öğrenciler veri tabanından başarılı bir şekilde listelendi";

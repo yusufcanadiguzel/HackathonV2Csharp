@@ -91,7 +91,7 @@ public class LessonsManager : ILessonService
             return new SuccessResult(ConstantsMessages.LessonUpdateSuccessMessage);
         }
 
-        // ORTA: Mantıksal hata - Mesaj doğrusu ile değiştirildi.
+        // TAMAMLANDI-ORTA: Mantıksal hata - Mesaj doğrusu ile değiştirildi.
         return new ErrorResult(ConstantsMessages.LessonUpdateFailedMessage);
     }
 

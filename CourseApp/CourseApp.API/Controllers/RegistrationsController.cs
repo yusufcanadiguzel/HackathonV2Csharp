@@ -67,9 +67,8 @@ public class RegistrationsController : ControllerBase
         if (createRegistrationDto is null)
             return BadRequest(ConstantsMessages.RegistrationNotNullMessage);
 
-        // TAMAMLANDI-ORTA: Tip dönüşüm hatası - Bu dönüşüm hem yapıldığı yer olarak yanlış hem de gereksiz. Bu nedenle kaldırıldı.
-        //var invalidPrice = (int)createRegistrationDto.Price;
-        
+        // TAMAMLANDI-ORTA: Tip dönüşüm hatası - Bu dönüşüm hem yapıldığı yer olarak yanlış hem de gereksiz. Bu nedenle kaldırıldı. -> var invalidPrice = (int)createRegistrationDto.Price;
+
         var result = await _registrationService.CreateAsync(createRegistrationDto);
         
         if (result.IsSuccess)
@@ -80,9 +79,13 @@ public class RegistrationsController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] UpdatedRegistrationDto updatedRegistrationDto)
+    public async Task<IActionResult> UpdateAsync([FromBody] UpdatedRegistrationDto updatedRegistrationDto)
     {
-        var result = await _registrationService.Update(updatedRegistrationDto);
+        if (updatedRegistrationDto is null)
+            return BadRequest(ConstantsMessages.RegistrationNotNullMessage);
+
+        var result = await _registrationService.UpdateAsync(updatedRegistrationDto);
+
         if (result.IsSuccess)
         {
             return Ok(result);
@@ -91,9 +94,10 @@ public class RegistrationsController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete([FromBody] DeleteRegistrationDto deleteRegistrationDto)
+    public async Task<IActionResult> DeleteAsync([FromBody] DeleteRegistrationDto deleteRegistrationDto)
     {
-        var result = await _registrationService.Remove(deleteRegistrationDto);
+        var result = await _registrationService.RemoveAsync(deleteRegistrationDto);
+
         if (result.IsSuccess)
         {
             return Ok(result);
