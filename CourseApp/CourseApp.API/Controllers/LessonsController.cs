@@ -1,5 +1,7 @@
 using CourseApp.EntityLayer.Dto.LessonDto;
 using CourseApp.ServiceLayer.Abstract;
+using CourseApp.ServiceLayer.Utilities.Constants;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseApp.API.Controllers;
@@ -9,10 +11,12 @@ namespace CourseApp.API.Controllers;
 public class LessonsController : ControllerBase
 {
     private readonly ILessonService _lessonService;
+    private readonly IValidator<CreateLessonDto> _createLessonValidator;
 
-    public LessonsController(ILessonService lessonService)
+    public LessonsController(ILessonService lessonService, IValidator<CreateLessonDto> createLessonValidator)
     {
         _lessonService = lessonService;
+        _createLessonValidator = createLessonValidator;
     }
 
     [HttpGet]
@@ -60,13 +64,21 @@ public class LessonsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateLessonDto createLessonDto)
+    public async Task<IActionResult> CreateAsync([FromBody] CreateLessonDto createLessonDto)
     {
-        // ORTA: Null check eksik - createLessonDto null olabilir
-        var lessonName = createLessonDto.Title; // Null reference riski
-        
-        // ORTA: Index out of range - lessonName boş/null ise
-        var firstChar = lessonName[0]; // IndexOutOfRangeException riski
+        if (createLessonDto is null)
+            return BadRequest(ConstantsMessages.LessonNotNullMessage);
+
+        var validationResult = await _createLessonValidator.ValidateAsync(createLessonDto);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+
+        // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontrol eklendi.
+        var lessonName = createLessonDto.Title;
+
+        // TAMAMLANDI-ORTA: Index out of range - Gerekli validasyon eklendi.
+        var firstChar = lessonName[0];
         
         var result = await _lessonService.CreateAsync(createLessonDto);
 

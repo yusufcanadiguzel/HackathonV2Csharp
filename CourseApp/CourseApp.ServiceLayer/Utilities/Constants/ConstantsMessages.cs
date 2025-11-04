@@ -65,6 +65,10 @@ public static class ConstantsMessages
     public const string LessonUpdateFailedMessage = "Ders güncellenirken bir hata oluştu";
     public const string LessonDeleteFailedMessage = "Ders silinirken bir hata oluştu";
 
+    // Lesson Validation Messages
+    public const string LessonNotNullMessage = "Ders bilgileri boş olamaz";
+    public const string LessonTitleNotEmptyValidationMessage = "Ders başlığı boş olamaz";
+
     // Registration Success Messages
     public const string RegistrationListSuccessMessage = "Kayıtlar veri tabanından başarılı bir şekilde listelendi";
     public const string RegistrationGetByIdSuccessMessage = "Kayıt başarılı bir şekilde bulundu";
