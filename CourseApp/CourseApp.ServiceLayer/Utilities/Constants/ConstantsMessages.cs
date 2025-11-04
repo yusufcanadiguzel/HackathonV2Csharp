@@ -108,4 +108,7 @@ public static class ConstantsMessages
 
     // Course Detail Error Messages
     public const string CourseDetailsFetchFailed = "Kurs detayları getirilemedi.";
+
+    // Controller Messages
+    public const string IdNotFoundMessage = "ID alanı boş olamaz.";
 }

@@ -1,5 +1,6 @@
 using CourseApp.EntityLayer.Dto.CourseDto;
 using CourseApp.ServiceLayer.Abstract;
+using CourseApp.ServiceLayer.Utilities.Constants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseApp.API.Controllers;
@@ -27,14 +28,19 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById([FromRoute(Name = "id")]string id)
     {
+        if (id is null)
+            return BadRequest(ConstantsMessages.IdNotFoundMessage);
+
         var result = await _courseService.GetByIdAsync(id);
-        // ORTA: Null reference - result null olabilir
+
+        // TAMAMLANDI-ORTA: Null reference - Business katmanında null olması durumunda ErrorDataResult dönülüyor
         if (result.IsSuccess)
         {
             return Ok(result);
         }
+
         return BadRequest(result);
     }
 
@@ -52,11 +58,14 @@ public class CoursesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCourseDto createCourseDto)
     {
-        // ORTA: Null check eksik - createCourseDto null olabilir
-        var courseName = createCourseDto.CourseName; // Null reference riski
-        
-        // ORTA: Array index out of range - courseName boş/null ise
-        var firstChar = courseName[0]; // IndexOutOfRangeException riski
+        if (createCourseDto is null)
+            return BadRequest(ConstantsMessages.CourseNotNullMessage);
+
+        // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontrol eklendi
+        var courseName = createCourseDto.CourseName;
+
+        // TAMAMLANDI-ORTA: Array index out of range - FluentValidation ile otomatik validasyon yapılarak hata durumunda ilgili status kodu dönülüyor
+        var firstChar = courseName[0];
         
         var result = await _courseService.CreateAsync(createCourseDto);
         if (result.IsSuccess)

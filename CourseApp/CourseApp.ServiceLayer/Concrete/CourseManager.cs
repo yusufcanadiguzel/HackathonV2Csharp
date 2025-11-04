@@ -48,14 +48,10 @@ public class CourseManager : ICourseService
 
     public async Task<IDataResult<GetByIdCourseDto>> GetByIdAsync(string id, bool track = true)
     {
-        // Fluent Validation - ID null veya boş kontrolü
-        if (id.IsNullOrEmpty())
-            throw new ArgumentNullException(nameof(id), "ID cannot be null or empty.");
-        
         var hasCourse = await _unitOfWork.Courses.GetByIdAsync(id, track);
 
         if (hasCourse is null)
-            throw new NullReferenceException(id + " ID'li kurs bulunamadı.");
+            return new ErrorDataResult<GetByIdCourseDto>(null, ConstantsMessages.CourseGetByIdFailedMessage);
 
         var course = new GetByIdCourseDto
         {
