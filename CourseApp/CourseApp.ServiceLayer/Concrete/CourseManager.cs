@@ -5,8 +5,6 @@ using CourseApp.ServiceLayer.Abstract;
 using CourseApp.ServiceLayer.Utilities.Constants;
 using CourseApp.ServiceLayer.Utilities.Result;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Linq;
 
 namespace CourseApp.ServiceLayer.Concrete;
 

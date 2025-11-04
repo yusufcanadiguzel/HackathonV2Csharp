@@ -2,9 +2,6 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using CourseApp.BusinessLayer.DependencyResolvers.Autofac;
 using CourseApp.DataAccessLayer.Concrete;
-using CourseApp.DataAccessLayer.UnitOfWork;
-using CourseApp.ServiceLayer.Abstract;
-using CourseApp.ServiceLayer.Concrete;
 using CourseApp.ServiceLayer.Mapping;
 using Microsoft.EntityFrameworkCore;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
@@ -27,18 +24,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
-// UnitOfWork Configuration
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-// Service Configuration
-builder.Services.AddScoped<IStudentService, StudentManager>();
-builder.Services.AddScoped<ICourseService, CourseManager>();
-builder.Services.AddScoped<IExamService, ExamManager>();
-builder.Services.AddScoped<IExamResultService, ExamResultManager>();
-builder.Services.AddScoped<IInstructorService, InstructorManager>();
-builder.Services.AddScoped<ILessonService, LessonsManager>();
-builder.Services.AddScoped<IRegistrationService, RegistrationManager>();
 
 // AutoMapper Configuration
 builder.Services.AddAutoMapper(typeof(StudentMapping).Assembly);

@@ -6,32 +6,40 @@ namespace CourseApp.DataAccessLayer.UnitOfWork;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
-    private StudentRepository _studentRepository;
-    private LessonRepository _lessonRepository;
-    private CourseRepository _courseRepository;
-    private RegistrationRepository _registrationRepository;
-    private ExamRepository _examRepository;
-    private ExamResultRepository _examResultRepository;
-    private InstructorRepository _instructorRepository;
+    private Lazy<IStudentRepository> _studentRepository;
+    private Lazy<ILessonRepository> _lessonRepository;
+    private Lazy<ICourseRepository> _courseRepository;
+    private Lazy<IRegistrationRepository> _registrationRepository;
+    private Lazy<IExamRepository> _examRepository;
+    private Lazy<IExamResultRepository> _examResultRepository;
+    private Lazy<IInstructorRepository> _instructorRepository;
 
-    public UnitOfWork(AppDbContext context)
+    public UnitOfWork(AppDbContext context, Lazy<IStudentRepository> studentRepository, Lazy<ILessonRepository> lessonRepository, Lazy<ICourseRepository> courseRepository, Lazy<IRegistrationRepository> registrationRepository, Lazy<IExamRepository> examRepository, Lazy<IExamResultRepository> examResultRepository, Lazy<IInstructorRepository> instructorRepository)
     {
         _context = context;
+        _studentRepository = studentRepository;
+        _lessonRepository = lessonRepository;
+        _courseRepository = courseRepository;
+        _registrationRepository = registrationRepository;
+        _examRepository = examRepository;
+        _examResultRepository = examResultRepository;
+        _instructorRepository = instructorRepository;
     }
 
-    public IStudentRepository Students => _studentRepository ?? (_studentRepository = new StudentRepository(_context)); // ZOR SEVİYE: Thread-safe değil - multi-threaded ortamda birden fazla instance oluşturulabilir
+    // TAMAMLANDI-ZOR SEVİYE: Thread-safe değil - Lifetime işlemleri artık Autofac tarafından yönetiliyor.
+    public IStudentRepository Students => _studentRepository.Value; 
 
-    public ILessonRepository Lessons => _lessonRepository ?? (_lessonRepository = new LessonRepository(_context));
+    public ILessonRepository Lessons => _lessonRepository.Value;
 
-    public ICourseRepository Courses => _courseRepository ?? (_courseRepository = new CourseRepository(_context));
+    public ICourseRepository Courses => _courseRepository.Value;
 
-    public IExamRepository Exams => _examRepository ?? (_examRepository = new ExamRepository(_context));
+    public IExamRepository Exams => _examRepository.Value;
 
-    public IExamResultRepository ExamResults => _examResultRepository ?? (_examResultRepository = new ExamResultRepository(_context));
+    public IExamResultRepository ExamResults => _examResultRepository.Value;
 
-    public IInstructorRepository Instructors => _instructorRepository ?? (_instructorRepository = new InstructorRepository(_context));
+    public IInstructorRepository Instructors => _instructorRepository.Value;
 
-    public IRegistrationRepository Registrations => _registrationRepository ?? (_registrationRepository = new RegistrationRepository(_context));
+    public IRegistrationRepository Registrations => _registrationRepository.Value;
 
     public async Task<int> CommitAsync()
     {

@@ -20,6 +20,7 @@ public class CoursesController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = await _courseService.GetAllAsync();
+
         if (result.IsSuccess)
         {
             return Ok(result);

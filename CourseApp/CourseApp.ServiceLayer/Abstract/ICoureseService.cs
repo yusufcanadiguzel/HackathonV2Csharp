@@ -1,7 +1,5 @@
 ﻿using CourseApp.EntityLayer.Dto.CourseDto;
-using CourseApp.EntityLayer.Entity;
 using CourseApp.ServiceLayer.Utilities.Result;
-using System.Linq.Expressions;
 
 namespace CourseApp.ServiceLayer.Abstract;
 
@@ -14,6 +12,3 @@ public interface ICourseService
     Task<IResult> Remove(DeleteCourseDto entity);
     Task<IDataResult<IEnumerable<GetAllCourseDetailDto>>> GetAllCourseDetail(bool track = true);
 }
-
-
-

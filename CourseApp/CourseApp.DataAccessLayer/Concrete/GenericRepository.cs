@@ -18,10 +18,12 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     public IQueryable<T> GetAll(bool track = true)
     {
         var query = _dbSet.AsQueryable();
+
         if (!track)
         {
             query = query.AsNoTracking();
         }
+
         return query;
     }
     public IQueryable<T> Where(Expression<Func<T, bool>> predicate,bool track)
