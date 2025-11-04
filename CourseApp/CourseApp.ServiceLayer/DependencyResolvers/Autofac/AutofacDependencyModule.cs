@@ -1,6 +1,8 @@
 ﻿using Autofac;
+using CourseApp.BusinessLayer.Validation.FluentValidation.Exam;
 using CourseApp.BusinessLayer.Validation.FluentValidation.Instructor;
 using CourseApp.BusinessLayer.Validation.FluentValidation.Lesson;
+using CourseApp.EntityLayer.Dto.ExamDto;
 using CourseApp.EntityLayer.Dto.InstructorDto;
 using CourseApp.EntityLayer.Dto.LessonDto;
 using FluentValidation;
@@ -16,6 +18,9 @@ namespace CourseApp.BusinessLayer.DependencyResolvers.Autofac
 
             // Lesson Service Registration
             builder.RegisterType<CreateLessonDtoValidator>().As<IValidator<CreateLessonDto>>().InstancePerLifetimeScope();
+
+            // Exam Service Registration
+            builder.RegisterType<DeleteExamDtoValidator>().As<IValidator<DeleteExamDto>>().InstancePerLifetimeScope();
         }
     }
 }

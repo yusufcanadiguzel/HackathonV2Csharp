@@ -1,5 +1,6 @@
 using CourseApp.EntityLayer.Dto.ExamDto;
 using CourseApp.ServiceLayer.Abstract;
+using CourseApp.ServiceLayer.Utilities.Constants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseApp.API.Controllers;
@@ -16,7 +17,7 @@ public class ExamsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAllAsync()
     {
         // ZOR: N+1 Problemi - Her exam için ayrı sorgu
         var result = await _examService.GetAllAsync();
@@ -48,20 +49,25 @@ public class ExamsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateExamDto createExamDto)
+    public async Task<IActionResult> CreateAsync([FromBody] CreateExamDto createExamDto)
     {
+        if (createExamDto is null)
+            return BadRequest(ConstantsMessages.ExamNotNullMessage);
+
         var result = await _examService.CreateAsync(createExamDto);
+
         if (result.IsSuccess)
         {
             return Ok(result);
         }
+
         return BadRequest(result);
     }
 
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateExamDto updateExamDto)
     {
-        var result = await _examService.Update(updateExamDto);
+        var result = await _examService.UpdateAsync(updateExamDto);
         if (result.IsSuccess)
         {
             return Ok(result);
@@ -72,7 +78,11 @@ public class ExamsController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> Delete([FromBody] DeleteExamDto deleteExamDto)
     {
-        var result = await _examService.Remove(deleteExamDto);
+        if (deleteExamDto is null)
+            return BadRequest(ConstantsMessages.ExamNotNullMessage);
+
+        var result = await _examService.RemoveAsync(deleteExamDto);
+
         if (result.IsSuccess)
         {
             return Ok(result);

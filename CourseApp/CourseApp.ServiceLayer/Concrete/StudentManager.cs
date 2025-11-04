@@ -74,8 +74,11 @@ public class StudentManager : IStudentService
     public async Task<IResult> RemoveAsync(DeleteStudentDto entity)
     {
         var deletedStudent = _mapper.Map<Student>(entity);
+
         _unitOfWork.Students.Remove(deletedStudent);
+
         var result = _unitOfWork.CommitAsync().GetAwaiter().GetResult();
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.StudentDeleteSuccessMessage);

@@ -33,6 +33,8 @@ public static class ConstantsMessages
     public const string ExamResultUpdateFailedMessage = "Sınav sonucu güncellenirken bir hata oluştu";
     public const string ExamResultDeleteFailedMessage = "Sınav sonucu silinirken bir hata oluştu";
 
+    // ExamResult Validation Messages
+
     // Instructor Success Messages
     public const string InstructorListSuccessMessage = "Eğitmenler veri tabanından başarılı bir şekilde listelendi";
     public const string InstructorGetByIdSuccessMessage = "Eğitmen başarılı bir şekilde bulundu";
@@ -117,6 +119,10 @@ public static class ConstantsMessages
     public const string ExamCreateFailedMessage = "Sınav oluşturulurken bir hata oluştu";
     public const string ExamUpdateFailedMessage = "Sınav güncellenirken bir hata oluştu";
     public const string ExamDeleteFailedMessage = "Sınav silinirken bir hata oluştu";
+
+    // Exam Validation Messages
+    public const string ExamNotNullMessage = "Sınav bilgileri boş olamaz";
+    public const string ExamIdNotEmptyValidationMessage = "Sınav ID boş olamaz";
 
     // Course Detail Success Messages
     public const string CourseDetailsFetchedSuccessfully = "Kurs detayları başarıyla getirildi.";
