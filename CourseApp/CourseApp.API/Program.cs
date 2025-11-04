@@ -1,3 +1,6 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using CourseApp.BusinessLayer.DependencyResolvers.Autofac;
 using CourseApp.DataAccessLayer.Concrete;
 using CourseApp.DataAccessLayer.UnitOfWork;
 using CourseApp.ServiceLayer.Abstract;
@@ -15,6 +18,9 @@ builder.Services.AddSwaggerGen();
 
 // FluentValidation Configuration
 builder.Services.AddFluentValidationAutoValidation();
+
+// Autofac konfigürasyonu
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacDependencyModule()));
 
 // DbContext Configuration
 builder.Services.AddDbContext<AppDbContext>(options =>
