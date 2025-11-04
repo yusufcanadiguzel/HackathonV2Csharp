@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CourseApp.DataAccessLayer.UnitOfWork;
-using CourseApp.EntityLayer.Dto.RegistrationDto;
 using CourseApp.EntityLayer.Dto.StudentDto;
 using CourseApp.EntityLayer.Entity;
 using CourseApp.ServiceLayer.Abstract;
@@ -23,7 +22,9 @@ public class StudentManager : IStudentService
     public async Task<IDataResult<IEnumerable<GetAllStudentDto>>> GetAllAsync(bool track = true)
     {
         var studentList = await _unitOfWork.Students.GetAll(track).ToListAsync();
+
         var studentListMapping = _mapper.Map<IEnumerable<GetAllStudentDto>>(studentList);
+
         if (!studentList.Any())
         {
             return new ErrorDataResult<IEnumerable<GetAllStudentDto>>(null, ConstantsMessages.StudentListFailedMessage);
@@ -33,26 +34,32 @@ public class StudentManager : IStudentService
 
     public async Task<IDataResult<GetByIdStudentDto>> GetByIdAsync(string id, bool track = true)
     {
-        // ORTA: Null check eksik - id null/empty olabilir
-        // ORTA: Null reference exception - hasStudent null olabilir ama kontrol edilmiyor
+        // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontroller Controller katmanında yapıldı.
+
         var hasStudent = await _unitOfWork.Students.GetByIdAsync(id, false);
+
+        // TAMAMLANDI-ORTA: Null reference exception - Gerekli kontrol eklendi.
+        if (hasStudent is null)
+            return new ErrorDataResult<GetByIdStudentDto>(null, ConstantsMessages.StudentGetByIdFailedMessage);
+
         var hasStudentMapping = _mapper.Map<GetByIdStudentDto>(hasStudent);
-        // ORTA: Null reference - hasStudentMapping null olabilir ama kullanılıyor
-        var name = hasStudentMapping.Name; // Null reference riski
+        // TAMAMLANDI-ORTA: Null reference - Sorunun kaynağı olabilecek hasStudent değişkeni için null check eklendi.
+
+        // TAMAMLANDI: Null reference - Değişken kullanılmadığı için kaldırıldı fakat gerekmesi durumunda sorun Name? değiştirilerek ve Create esnasında yapılacak validasyon ile çözülebilir. -> var name = hasStudentMapping.Name;
+
         return new SuccessDataResult<GetByIdStudentDto>(hasStudentMapping, ConstantsMessages.StudentGetByIdSuccessMessage);
     }
 
     public async Task<IResult> CreateAsync(CreateStudentDto entity)
     {
-        if(entity == null) return new ErrorResult("Null");
-        
-        // ORTA: Tip dönüşüm hatası - string'i int'e direkt cast
-        //var invalidConversion = (int)entity.TC; // ORTA: InvalidCastException - string int'e dönüştürülemez
-        
+        // TAMAMLANDI-ORTA: Null reference - CreateStudentDto controller'den geldiği için orada check edildi. -> if (entity == null) return new ErrorResult("Null");
+
+        // TAMAMLANDI-ORTA: Tip dönüşüm hatası - Değişken herhangi bir yerde kullanılmadığı için gereksiz. Bu nedenle kaldırıldı. -> var invalidConversion = (int)entity.TC;
+
         var createdStudent = _mapper.Map<Student>(entity);
-        // ORTA: Null reference - createdStudent null olabilir
-        var studentName = createdStudent.Name; // Null check yok
-        
+
+        // TAMAMLANDI: Null reference - Değişken kullanılmadığı için kaldırıldı fakat gerekmesi durumunda sorun Name? değiştirilerek ve Create esnasında yapılacak validasyon ile çözülebilir. -> var studentName = createdStudent.Name;
+
         await _unitOfWork.Students.CreateAsync(createdStudent);
         // ZOR: Async/await anti-pattern - .Result kullanımı deadlock'a sebep olabilir
         var result = _unitOfWork.CommitAsync().Result; // ZOR: Anti-pattern
@@ -64,7 +71,7 @@ public class StudentManager : IStudentService
         return new ErrorResult(ConstantsMessages.StudentCreateFailedMessage);
     }
 
-    public async Task<IResult> Remove(DeleteStudentDto entity)
+    public async Task<IResult> RemoveAsync(DeleteStudentDto entity)
     {
         var deletedStudent = _mapper.Map<Student>(entity);
         _unitOfWork.Students.Remove(deletedStudent);
@@ -76,22 +83,24 @@ public class StudentManager : IStudentService
         return new ErrorResult(ConstantsMessages.StudentDeleteFailedMessage);
     }
 
-    public async Task<IResult> Update(UpdateStudentDto entity)
+    public async Task<IResult> UpdateAsync(UpdateStudentDto entity)
     {
-        // ORTA: Null check eksik - entity null olabilir
+        // TAMAMLANDI-ORTA: Null check - UpdateStudentDto controller'den geldiği için orada check edildi.
+
         var updatedStudent = _mapper.Map<Student>(entity);
-        
-        // ORTA: Index out of range - entity.TC null/boş olabilir
-        var tcFirstDigit = entity.TC[0]; // IndexOutOfRangeException riski
-        
+
+        // TAMAMLANDI-ORTA: Index out of range - Değişken kullanılmadığı için kaldırıldı fakat gerekmesi durumunda sorun TC? değiştirilerek ve Create esnasında yapılacak validasyon ile çözülebilir. -> var tcFirstDigit = entity.TC[0];
+
         _unitOfWork.Students.Update(updatedStudent);
+
         var result = await _unitOfWork.CommitAsync();
+
         if (result > 0)
         {
-            // ORTA: Mantıksal hata - başarılı durumda yanlış mesaj döndürülüyor
-            return new SuccessResult(ConstantsMessages.StudentListSuccessMessage); // HATA: UpdateSuccessMessage olmalıydı
+            // TAMAMLANDI-ORTA: Mantıksal hata - Doğru mesaj ile değiştirildi.
+            return new SuccessResult(ConstantsMessages.StudentUpdateSuccessMessage);
         }
-        // ORTA: Mantıksal hata - hata durumunda SuccessResult döndürülüyor
-        return new SuccessResult(ConstantsMessages.StudentUpdateFailedMessage); // HATA: ErrorResult olmalıydı
+        // TAMAMLANDI-ORTA: Mantıksal hata - Doğru sonuç ile değiştirildi.
+        return new ErrorResult(ConstantsMessages.StudentUpdateFailedMessage);
     }
 }

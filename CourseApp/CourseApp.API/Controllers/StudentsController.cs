@@ -1,9 +1,10 @@
 using CourseApp.EntityLayer.Dto.StudentDto;
 using CourseApp.ServiceLayer.Abstract;
 using Microsoft.AspNetCore.Mvc;
-// Eksik using - System.Text.Json kullanılıyor ama using yok - C# 10 ile gelen implicit using nedeniyle yazılmaya bilir
-using System.Text.Json;
-using CourseApp.DataAccessLayer.Concrete; // ZOR: Katman ihlali - Controller'dan direkt DataAccessLayer'a erişim
+using CourseApp.ServiceLayer.Utilities.Constants;
+// TAMAMLANDI: Eksik using - Kullanılmadığı için eklenmedi. -> using System.Text.Json;
+
+// TAMAMLANDI-ZOR: Katman ihlali - İhlallerin gerçekleştirildiği kod blokları kaldırıldı.
 
 namespace CourseApp.API.Controllers;
 
@@ -12,25 +13,18 @@ namespace CourseApp.API.Controllers;
 public class StudentsController : ControllerBase
 {
     private readonly IStudentService _studentService;
-    // ZOR: Katman ihlali - Presentation katmanından direkt DataAccess katmanına erişim
-    private readonly AppDbContext _dbContext;
-    // ORTA: Değişken tanımlandı ama asla kullanılmadı ve null olabilir
-    private List<GetAllStudentDto> _cachedStudents;
+    // TAMAMLANDI-ZOR: Katman ihlali - Erişim olması gerektiği gibi Business üzerinden yapıldı.
+    // TAMAMLANDI-ORTA: Değişken tanımlandı ama asla kullanılmadı ve null olabilir - Gereksiz değişken ve kullanım olarak hem gereksiz hem de yanlış. Bu nedenle kaldırıldı. -> private List<GetAllStudentDto> _cachedStudents;
 
-    public StudentsController(IStudentService studentService, AppDbContext dbContext)
+    public StudentsController(IStudentService studentService)
     {
         _studentService = studentService;
-        _dbContext = dbContext; // ZOR: Katman ihlali
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        // ORTA: Null reference exception riski - _cachedStudents null
-        if (_cachedStudents != null && _cachedStudents.Count > 0)
-        {
-            return Ok(_cachedStudents); // Mantıksal hata: cache kontrolü yanlış
-        }
+        // TAMAMLANDI-ORTA: Null reference exception riski - Gereksiz değişken ve kullanım olarak hem gereksiz hem de yanlış. Bu nedenle kaldırıldı. -> _cachedStudents
         
         var result = await _studentService.GetAllAsync();
         
@@ -38,19 +32,24 @@ public class StudentsController : ControllerBase
         {
             return Ok(result);
         }
+
         return BadRequest(result);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        // ORTA: Null check eksik - id null/empty olabilir
-        // ORTA: Index out of range riski - string.Length kullanımı yanlış olabilir
-        var studentId = id[10]; // ORTA: id 10 karakterden kısa olursa IndexOutOfRangeException
-        
+        // TAMAMLANDI-ORTA: Null check eksik - id null/empty olabilir - Gerekli kontrol eklendi.
+        if (string.IsNullOrWhiteSpace(id))
+            return BadRequest(ConstantsMessages.StudentIdNotEmptyValidationMessage);
+
+        // TAMAMLANDI-ORTA: Index out of range riski - Değişken başka bir yerde kullanılmadığı için gereksiz. Bu nedenle kaldırıldı. -> var studentId = id[10];
+
+        // TAMAMLANDI-ORTA: Null reference exception - Gerekli kontrol Business katmanında yapıldı.
         var result = await _studentService.GetByIdAsync(id);
-        // ORTA: Null reference exception - result.Data null olabilir
-        var studentName = result.Data.Name; // Null check yok
+
+        // TAMAMLANDI: Null reference - Değişken kullanılmadığı için kaldırıldı fakat gerekmesi durumunda sorun Name? değiştirilerek ve Create esnasında yapılacak validasyon ile çözülebilir. -> var studentName = result.Data.Name;
+
         if (result.IsSuccess)
         {
             return Ok(result);
@@ -59,19 +58,17 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateStudentDto createStudentDto)
+    public async Task<IActionResult> CreateAsync([FromBody] CreateStudentDto createStudentDto)
     {
-        // ORTA: Null check eksik
-        // ORTA: Tip dönüşüm hatası - string'i int'e direkt atama
-        //var invalidAge = (int)createStudentDto.Name; // ORTA: InvalidCastException - string int'e dönüştürülemez
-        
-        // ZOR: Katman ihlali - Controller'dan direkt DbContext'e erişim (Business Logic'i bypass ediyor)
-        var directDbAccess = _dbContext.Students.Add(new CourseApp.EntityLayer.Entity.Student 
-        { 
-            Name = createStudentDto.Name 
-        });
-        
+        // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontrol eklendi.
+        if (createStudentDto is null)
+            return BadRequest(ConstantsMessages.StudentNotNullMessage);
+
+        // TAMAMLANDI-ORTA: Tip dönüşüm hatası - Bu dönüşüm hem yapıldığı yer olarak yanlış hem de gereksiz. Bu nedenle kaldırıldı. -> var invalidAge = (int)createStudentDto.Name;
+
+        // TAMAMLANDI-ZOR: Katman ihlali - Business'ı kullanması için gerekli düzeltme yapıldı.
         var result = await _studentService.CreateAsync(createStudentDto);
+
         if (result.IsSuccess)
         {
             return Ok(result);
@@ -83,27 +80,39 @@ public class StudentsController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateStudentDto updateStudentDto)
     {
-        var name = updateStudentDto.Name;
-        
-        var result = await _studentService.Update(updateStudentDto);
+        // TAMAMLANDI: Null check eklendi.
+        if (updateStudentDto is null)
+            return BadRequest(ConstantsMessages.StudentNotNullMessage);
+
+        // TAMAMLANDI: Gereksiz değişken ve kullanım olarak hem gereksiz hem de yanlış. Bu nedenle kaldırıldı. -> var name = updateStudentDto.Name;
+
+        var result = await _studentService.UpdateAsync(updateStudentDto);
+
         if (result.IsSuccess)
         {
             return Ok(result);
         }
+
         return BadRequest(result);
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromBody] DeleteStudentDto deleteStudentDto)
     {
-        // ORTA: Null reference - deleteStudentDto null olabilir
-        var id = deleteStudentDto.Id; // Null check yok
-        
-        // ZOR: Memory leak - DbContext Dispose edilmiyor
+        // TAMAMLANDI-ORTA: Null reference - Null check eklendi.
+        if (deleteStudentDto is null)
+            return BadRequest(ConstantsMessages.StudentNotNullMessage);
+
+        // TAMAMLANDI: Gereksiz değişken olduğu için kaldırıldı. -> var id = deleteStudentDto.Id;
+
+        /* 
+        TAMAMLANDI-ZOR: Memory leak - Students'ı getirmek gereksiz olduğu için kaldırıldı. ->
         var tempContext = new AppDbContext(new Microsoft.EntityFrameworkCore.DbContextOptions<AppDbContext>());
-        tempContext.Students.ToList(); // Dispose edilmeden kullanılıyor
+        tempContext.Students.ToList();
+        */
         
-        var result = await _studentService.Remove(deleteStudentDto);
+        var result = await _studentService.RemoveAsync(deleteStudentDto);
+
         if (result.IsSuccess)
         {
             return Ok(result);

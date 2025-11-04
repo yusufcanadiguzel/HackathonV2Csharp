@@ -100,6 +100,10 @@ public static class ConstantsMessages
     public const string StudentUpdateFailedMessage = "Öğrenci güncellenirken bir hata oluştu";
     public const string StudentDeleteFailedMessage = "Öğrenci silinirken bir hata oluştu";
 
+    // Student Validation Messages
+    public const string StudentNotNullMessage = "Öğrenci bilgileri boş olamaz";
+    public const string StudentIdNotEmptyValidationMessage = "Öğrenci ID boş olamaz";
+
     // Exam Success Messages
     public const string ExamListSuccessMessage = "Sınavlar veri tabanından başarılı bir şekilde listelendi";
     public const string ExamGetByIdSuccessMessage = "Sınav başarılı bir şekilde bulundu";
