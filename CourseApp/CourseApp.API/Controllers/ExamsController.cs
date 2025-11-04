@@ -20,9 +20,10 @@ public class ExamsController : ControllerBase
     {
         // ZOR: N+1 Problemi - Her exam için ayrı sorgu
         var result = await _examService.GetAllAsync();
+
         if (result.IsSuccess)
         {
-            // ORTA: Null reference - result.Data null olabilir
+            // TAMAMLANDI-ORTA: Null reference - Business katmanında null olması durumunda ErrorDataResult dönülüyor
             var exams = result.Data.ToList();
             // ZOR: N+1 - Her exam için ayrı sorgu (örnek - gerçek implementasyon service layer'da olabilir)
             foreach (var exam in exams)

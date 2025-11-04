@@ -4,6 +4,7 @@ using CourseApp.ServiceLayer.Abstract;
 using CourseApp.ServiceLayer.Concrete;
 using CourseApp.ServiceLayer.Mapping;
 using Microsoft.EntityFrameworkCore;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// FluentValidation Configuration
+builder.Services.AddFluentValidationAutoValidation();
 
 // DbContext Configuration
 builder.Services.AddDbContext<AppDbContext>(options =>
