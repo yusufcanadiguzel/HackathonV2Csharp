@@ -8,8 +8,10 @@ public class InstructorMapping:Profile
 {
     public InstructorMapping()
     {
-        CreateMap<Instructor,GetAllInstructorDto>().ReverseMap();
-        CreateMap<Instructor,GetByIdInstructorDto>().ReverseMap();
-        CreateMap<Instructor,DeletedInstructorDto>().ReverseMap();
+        CreateMap<Instructor, GetAllInstructorDto>().ReverseMap();
+        CreateMap<Instructor, GetByIdInstructorDto>().ReverseMap();
+        CreateMap<Instructor, CreatedInstructorDto>().ReverseMap();
+        CreateMap<Instructor, UpdatedInstructorDto>().ReverseMap();
+        CreateMap<Instructor, DeletedInstructorDto>().ReverseMap();
     }
 }

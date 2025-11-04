@@ -1,4 +1,5 @@
-﻿using CourseApp.DataAccessLayer.UnitOfWork;
+﻿using AutoMapper;
+using CourseApp.DataAccessLayer.UnitOfWork;
 using CourseApp.EntityLayer.Dto.CourseDto;
 using CourseApp.EntityLayer.Entity;
 using CourseApp.ServiceLayer.Abstract;
@@ -11,10 +12,12 @@ namespace CourseApp.ServiceLayer.Concrete;
 public class CourseManager : ICourseService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public CourseManager(IUnitOfWork unitOfWork)
+    public CourseManager(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<IDataResult<IEnumerable<GetAllCourseDto>>> GetAllAsync(bool track = true)
@@ -66,17 +69,19 @@ public class CourseManager : ICourseService
     }
     public async Task<IResult> CreateAsync(CreateCourseDto entity)
     {
-        var createdCourse = new Course
-        {
-            CourseName = entity.CourseName,
-            CreatedDate = entity.CreatedDate,
-            EndDate = entity.EndDate,
-            InstructorID = entity.InstructorID,
-            IsActive = entity.IsActive,
-            StartDate = entity.StartDate,
-        };
+        //var createdCourse = new Course
+        //{
+        //    CourseName = entity.CourseName,
+        //    CreatedDate = entity.CreatedDate,
+        //    EndDate = entity.EndDate,
+        //    InstructorID = entity.InstructorID,
+        //    IsActive = entity.IsActive,
+        //    StartDate = entity.StartDate,
+        //};
 
-        await _unitOfWork.Courses.CreateAsync(createdCourse);
+        var course = _mapper.Map<Course>(entity);
+
+        await _unitOfWork.Courses.CreateAsync(course);
 
         var result = await _unitOfWork.CommitAsync();
 
