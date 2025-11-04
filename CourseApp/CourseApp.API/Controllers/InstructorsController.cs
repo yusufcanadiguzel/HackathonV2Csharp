@@ -1,5 +1,6 @@
 using CourseApp.EntityLayer.Dto.InstructorDto;
 using CourseApp.ServiceLayer.Abstract;
+using CourseApp.ServiceLayer.Utilities.Constants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseApp.API.Controllers;
@@ -40,8 +41,12 @@ public class InstructorsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreatedInstructorDto createdInstructorDto)
     {
-        // ORTA: Null check eksik - createdInstructorDto null olabilir
-        var instructorName = createdInstructorDto.Name; // Null reference riski
+        // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontrol eklendi
+        if (createdInstructorDto is null)
+            return BadRequest(ConstantsMessages.InstructorNotNullMessage);
+
+        // ORTA: Gerekli validasyon kuralları yazıldı.
+        var instructorName = createdInstructorDto.Name;
         
         // ORTA: Index out of range - instructorName boş/null ise
         var firstChar = instructorName[0]; // IndexOutOfRangeException riski

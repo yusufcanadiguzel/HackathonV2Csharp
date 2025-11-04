@@ -46,6 +46,10 @@ public static class ConstantsMessages
     public const string InstructorCreateFailedMessage = "Eğitmen oluşturulurken bir hata oluştu";
     public const string InstructorUpdateFailedMessage = "Eğitmen güncellenirken bir hata oluştu";
     public const string InstructorDeleteFailedMessage = "Eğitmen silinirken bir hata oluştu";
+    public const string InstructorNotNullMessage = "Eğitmen bilgileri boş olamaz";
+
+    // Instructor Validation Messages
+    public const string InstructorNameNotEmptyValidationMessage = "Eğitmen ismi boş olamaz";
 
     // Lesson Success Messages
     public const string LessonListSuccessMessage = "Dersler veri tabanından başarılı bir şekilde listelendi";

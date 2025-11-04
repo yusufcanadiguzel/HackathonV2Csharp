@@ -25,8 +25,8 @@ public class CourseManager : ICourseService
         var courseList = await _unitOfWork.Courses.GetAll(false).ToListAsync();
 
         // courseList'i burada kontrol ederek hem course'ın null olma hem de firstCourse'nın IndexOutOfRangeException olma ihtimalini ortadan kaldırıyoruz
-        if (courseList is null)
-            throw new NullReferenceException(ConstantsMessages.CourseGetByIdFailedMessage);
+        if (courseList is null || courseList.Count == 0)
+            return new ErrorDataResult<IEnumerable<GetAllCourseDto>>(Enumerable.Empty<GetAllCourseDto>(), ConstantsMessages.CourseListFailedMessage);
 
         // ZOR: N+1 - Include/ThenInclude kullanılmamış, lazy loading aktif
         var result = courseList.Select(course => new GetAllCourseDto

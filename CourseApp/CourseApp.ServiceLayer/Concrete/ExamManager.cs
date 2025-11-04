@@ -24,7 +24,10 @@ public class ExamManager : IExamService
     {
         // ZOR: Async/await anti-pattern - async metot içinde senkron ToList kullanımı
         var examList = _unitOfWork.Exams.GetAll(false).ToList(); // ZOR: ToListAsync kullanılmalıydı
-        
+
+        if (examList is null || examList.Count == 0)
+            return new ErrorDataResult<IEnumerable<GetAllExamDto>>(Enumerable.Empty<GetAllExamDto>(), ConstantsMessages.ExamListFailedMessage);
+
         var examListMapping = _mapper.Map<IEnumerable<GetAllExamDto>>(examList);
         
         // ORTA: Index out of range - examtListMapping boş olabilir

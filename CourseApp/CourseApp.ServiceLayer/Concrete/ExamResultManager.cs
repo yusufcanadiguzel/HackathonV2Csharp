@@ -25,6 +25,10 @@ public class ExamResultManager : IExamResultService
     public async Task<IDataResult<IEnumerable<GetAllExamResultDto>>> GetAllAsync(bool track = true)
     {
         var examResultList = await _unitOfWork.ExamResults.GetAll(false).ToListAsync();
+
+        if (examResultList is null || examResultList.Count == 0)
+            return new ErrorDataResult<IEnumerable<GetAllExamResultDto>>(Enumerable.Empty<GetAllExamResultDto>(), ConstantsMessages.ExamResultListFailedMessage);
+
         var examResultListMapping = _mapper.Map<IEnumerable<GetAllExamResultDto>>(examResultList);
         if (!examResultList.Any())
         {

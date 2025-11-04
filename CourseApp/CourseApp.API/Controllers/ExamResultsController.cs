@@ -20,7 +20,8 @@ public class ExamResultsController : ControllerBase
     {
         // ZOR: N+1 Problemi - Her examResult için ayrı sorgu
         var result = await _examResultService.GetAllAsync();
-        // ORTA: Null reference - result.Data null olabilir
+
+        // TAMAMLANDI-ORTA: Null reference - Business katmanında null olması durumunda ErrorDataResult dönülüyor
         if (result.IsSuccess && result.Data != null)
         {
             // ZOR: N+1 - Her examResult için detay çekiliyor
