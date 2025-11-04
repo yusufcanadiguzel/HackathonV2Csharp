@@ -17,7 +17,7 @@ public static class ConstantsMessages
     public const string CourseDeleteFailedMessage = "Kurs silinirken bir hata oluştu";
 
     // Course Validation Messages
-    public const string CourseNotNullMessage = "Kurs bilgileri boş olamaz";
+    public const string CourseNameNotNullMessage = "Kurs ismi boş olamaz";
 
     // ExamResult Success Messages
     public const string ExamResultListSuccessMessage = "Sınav sonuçları veri tabanından başarılı bir şekilde listelendi";

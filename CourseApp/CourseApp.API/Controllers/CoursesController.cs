@@ -59,7 +59,7 @@ public class CoursesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateCourseDto createCourseDto)
     {
         if (createCourseDto is null)
-            return BadRequest(ConstantsMessages.CourseNotNullMessage);
+            return BadRequest(ConstantsMessages.CourseNameNotNullMessage);
 
         // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontrol eklendi
         var courseName = createCourseDto.CourseName;

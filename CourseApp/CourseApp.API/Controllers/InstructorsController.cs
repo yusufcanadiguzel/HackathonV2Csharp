@@ -1,6 +1,7 @@
 using CourseApp.EntityLayer.Dto.InstructorDto;
 using CourseApp.ServiceLayer.Abstract;
 using CourseApp.ServiceLayer.Utilities.Constants;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseApp.API.Controllers;
@@ -10,10 +11,12 @@ namespace CourseApp.API.Controllers;
 public class InstructorsController : ControllerBase
 {
     private readonly IInstructorService _instructorService;
+    private readonly IValidator<CreatedInstructorDto> _createdInstructorValidator;
 
-    public InstructorsController(IInstructorService instructorService)
+    public InstructorsController(IInstructorService instructorService, IValidator<CreatedInstructorDto> createdInstructorValidator)
     {
         _instructorService = instructorService;
+        _createdInstructorValidator = createdInstructorValidator;
     }
 
     [HttpGet]
@@ -39,20 +42,24 @@ public class InstructorsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreatedInstructorDto createdInstructorDto)
+    public async Task<IActionResult> CreateAsync([FromBody] CreatedInstructorDto createdInstructorDto)
     {
         // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontrol eklendi
         if (createdInstructorDto is null)
             return BadRequest(ConstantsMessages.InstructorNotNullMessage);
 
-        // ORTA: Gerekli validasyon kuralları yazıldı.
+        var validationResult = await _createdInstructorValidator.ValidateAsync(createdInstructorDto);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+
+        // TAMAMLANDI-ORTA: Gerekli validasyon eklendi.
         var instructorName = createdInstructorDto.Name;
-        
-        // ORTA: Index out of range - instructorName boş/null ise
+
+        // TAMAMLANDI-ORTA: Gerekli validasyon eklendi.
         var firstChar = instructorName[0]; // IndexOutOfRangeException riski
-        
-        // ORTA: Tip dönüşüm hatası - string'i int'e direkt cast
-        //var invalidAge = (int)instructorName; // ORTA: InvalidCastException
+
+        // TAMAMLANDI-ORTA: Tip dönüşüm hatası - İstenilen işlem için gerekli property(age) mevcut olmadığı için kaldırıldı.
         
         var result = await _instructorService.CreateAsync(createdInstructorDto);
         if (result.IsSuccess)

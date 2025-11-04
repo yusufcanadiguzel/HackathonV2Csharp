@@ -8,7 +8,6 @@ namespace CourseApp.BusinessLayer.Validation.FluentValidation.Instructor
     {
         public CreatedInstructorDtoValidator()
         {
-            //RuleFor(x => x.Name).NotNull().NotEmpty().WithMessage(ConstantsMessages.InstructorNameNotEmptyValidationMessage);
             RuleFor(x => x.Name).Must(name => !string.IsNullOrWhiteSpace(name)).WithMessage(ConstantsMessages.InstructorNameNotEmptyValidationMessage);
         }
     }
