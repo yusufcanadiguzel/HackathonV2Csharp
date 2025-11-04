@@ -83,6 +83,9 @@ public static class ConstantsMessages
     public const string RegistrationUpdateFailedMessage = "Kayıt güncellenirken bir hata oluştu";
     public const string RegistrationDeleteFailedMessage = "Kayıt silinirken bir hata oluştu";
 
+    // Registration Validation Messages
+    public const string RegistrationNotNullMessage = "Kayıt bilgileri boş olamaz";
+
     // Student Success Messages
     public const string StudentListSuccessMessage = "Öğrenciler veri tabanından başarılı bir şekilde listelendi";
     public const string StudentGetByIdSuccessMessage = "Öğrenci başarılı bir şekilde bulundu";

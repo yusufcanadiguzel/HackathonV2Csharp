@@ -1,5 +1,6 @@
 using CourseApp.EntityLayer.Dto.RegistrationDto;
 using CourseApp.ServiceLayer.Abstract;
+using CourseApp.ServiceLayer.Utilities.Constants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseApp.API.Controllers;
@@ -60,11 +61,14 @@ public class RegistrationsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateRegistrationDto createRegistrationDto)
+    public async Task<IActionResult> CreateAsync([FromBody] CreateRegistrationDto createRegistrationDto)
     {
-        // ORTA: Null check eksik - createRegistrationDto null olabilir
-        // ORTA: Tip dönüşüm hatası - decimal'i int'e direkt cast
-        var invalidPrice = (int)createRegistrationDto.Price; // ORTA: InvalidCastException
+        // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontrol eklendi.
+        if (createRegistrationDto is null)
+            return BadRequest(ConstantsMessages.RegistrationNotNullMessage);
+
+        // TAMAMLANDI-ORTA: Tip dönüşüm hatası - Bu dönüşüm hem yapıldığı yer olarak yanlış hem de gereksiz. Bu nedenle kaldırıldı.
+        //var invalidPrice = (int)createRegistrationDto.Price;
         
         var result = await _registrationService.CreateAsync(createRegistrationDto);
         
