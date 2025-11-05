@@ -16,17 +16,12 @@ public sealed class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<Registration>()
-            .Property(p => p.Price)
-            .HasPrecision(18, 2);
+        // Konfigürasyonları otomatik olarak uygular.
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         
-        modelBuilder.Entity<Course>()
-            .HasOne(c => c.Instructor)
-            .WithMany()
-            .HasForeignKey(c => c.InstructorID);
+        base.OnModelCreating(modelBuilder);
     }
 }

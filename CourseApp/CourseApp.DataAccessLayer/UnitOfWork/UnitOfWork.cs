@@ -6,6 +6,8 @@ namespace CourseApp.DataAccessLayer.UnitOfWork;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
+
+    // Repositories
     private Lazy<IStudentRepository> _studentRepository;
     private Lazy<ILessonRepository> _lessonRepository;
     private Lazy<ICourseRepository> _courseRepository;
