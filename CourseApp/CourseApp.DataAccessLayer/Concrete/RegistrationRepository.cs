@@ -15,12 +15,13 @@ public class RegistrationRepository : GenericRepository<Registration>, IRegistra
 
     public IQueryable<Registration> GetAllRegistrationDetail(bool track = true)
     {
-        //var query = _context.Set<Registration>().AsQueryable();
         var query = _dbSet.AsQueryable();
+
         if (!track)
         {
             query = query.AsNoTracking();   
         }
+
         return query.Include(r => r.Course)
                     .Include(r => r.Student);
     }

@@ -20,13 +20,14 @@ public class ExamResultsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        // ZOR: N+1 Problemi - Her examResult için ayrı sorgu
+        // TAMAMLANDI-ZOR: N+1 Problemi - Her examResult için ayrı sorgu
         var result = await _examResultService.GetAllAsync();
 
+        /* TAMAMLANDI: Dead code olduğu için kaldırıldı.
         // TAMAMLANDI-ORTA: Null reference - Gerekli null check manager'a eklendi.
         if (result.IsSuccess && result.Data != null)
         {
-            // ZOR: N+1 - Her examResult için detay çekiliyor
+            // TAMAMLANDI-ZOR: N+1 - Her examResult için detay çekiliyor - Dead code olduğu için kaldırıldı.
             var examResults = result.Data.ToList();
             foreach (var examResult in examResults)
             {
@@ -35,7 +36,11 @@ public class ExamResultsController : ControllerBase
             }
             return Ok(result);
         }
+        */
         
+        if (result.IsSuccess)
+            return Ok(result);
+
         return BadRequest(result);
     }
 

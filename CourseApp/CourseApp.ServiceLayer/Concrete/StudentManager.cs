@@ -61,8 +61,10 @@ public class StudentManager : IStudentService
         // TAMAMLANDI: Null reference - Değişken kullanılmadığı için kaldırıldı fakat gerekmesi durumunda sorun Name? değiştirilerek ve Create esnasında yapılacak validasyon ile çözülebilir. -> var studentName = createdStudent.Name;
 
         await _unitOfWork.Students.CreateAsync(createdStudent);
-        // ZOR: Async/await anti-pattern - .Result kullanımı deadlock'a sebep olabilir
-        var result = _unitOfWork.CommitAsync().Result; // ZOR: Anti-pattern
+
+        // TAMAMLANDI-ZOR: Async/await anti-pattern - İlgili kod güncellendi.
+        var result = await _unitOfWork.CommitAsync();
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.StudentCreateSuccessMessage);

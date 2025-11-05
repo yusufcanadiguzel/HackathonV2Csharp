@@ -53,13 +53,18 @@ public class InstructorManager : IInstructorService
     public async Task<IResult> CreateAsync(CreatedInstructorDto entity)
     {
         var createdInstructor = _mapper.Map<Instructor>(entity);
+
         await _unitOfWork.Instructors.CreateAsync(createdInstructor);
+
         var result = await _unitOfWork.CommitAsync();
+
         if(createdInstructor == null) return new ErrorResult("Null");
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.InstructorCreateSuccessMessage);
         }
+
         return new ErrorResult(ConstantsMessages.InstructorCreateFailedMessage);
     }
 

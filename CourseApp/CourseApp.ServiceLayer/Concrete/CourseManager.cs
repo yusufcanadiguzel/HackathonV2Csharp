@@ -22,14 +22,16 @@ public class CourseManager : ICourseService
 
     public async Task<IDataResult<IEnumerable<GetAllCourseDto>>> GetAllAsync(bool track = true)
     {
-        // ZOR: N+1 Problemi - Her course için Instructor ayrı sorgu ile çekiliyor
+        // TAMAMLANDI:ZOR: N+1 Problemi - Repository'de sorgu sadeleştirilerek tek seferde verinin çekilmesi sağlandı.
         var courseList = await _unitOfWork.Courses.GetAll(false).ToListAsync();
 
-        // courseList'i burada kontrol ederek hem course'ın null olma hem de firstCourse'nın IndexOutOfRangeException olma ihtimalini ortadan kaldırıyoruz
-        if (courseList is null || courseList.Count == 0)
+        // TAMAMLANDI: Gerekli kontrol eklendi.
+        if (courseList is null || !courseList.Any())
             return new ErrorDataResult<IEnumerable<GetAllCourseDto>>(Enumerable.Empty<GetAllCourseDto>(), ConstantsMessages.CourseListFailedMessage);
 
-        // ZOR: N+1 - Include/ThenInclude kullanılmamış, lazy loading aktif
+        var result = _mapper.Map<IEnumerable<GetAllCourseDto>>(courseList);
+
+        /* TAMAMLANDI:ZOR: N+1 - Include/ThenInclude kullanılmamış - Repository'deki sorgu güncellendiği için böyle bir select koduna gerek kalmamıştır. ->
         var result = courseList.Select(course => new GetAllCourseDto
         {
             CourseName = course.CourseName,
@@ -37,12 +39,13 @@ public class CourseManager : ICourseService
             EndDate = course.EndDate,
             Id = course.ID,
             InstructorID = course.InstructorID,
-            // ZOR: Her course için ayrı sorgu - course.Instructor?.Name çekiliyor
+            // TAMAMLANDI-ZOR: Her course için ayrı sorgu - course.Instructor?.Name çekiliyor
             IsActive = course.IsActive,
             StartDate = course.StartDate
         }).ToList();
+        */
 
-        var firstCourse = result[0];
+        // TAMAMLANDI: Dead code olduğu için kaldırıldı. -> var firstCourse = result[0];
 
         return new SuccessDataResult<IEnumerable<GetAllCourseDto>>(result, ConstantsMessages.CourseListSuccessMessage);
     }
@@ -54,31 +57,12 @@ public class CourseManager : ICourseService
         if (hasCourse is null)
             return new ErrorDataResult<GetByIdCourseDto>(null, ConstantsMessages.CourseGetByIdFailedMessage);
 
-        var course = new GetByIdCourseDto
-        {
-            CourseName = hasCourse.CourseName, // Null reference riski
-            CreatedDate = hasCourse.CreatedDate,
-            EndDate = hasCourse.EndDate,
-            InstructorID = hasCourse.InstructorID,
-            IsActive = hasCourse.IsActive,
-            StartDate = hasCourse.StartDate,
-            Id = hasCourse.ID
-        };
+        var course = _mapper.Map<GetByIdCourseDto>(hasCourse);
 
         return new SuccessDataResult<GetByIdCourseDto>(course, ConstantsMessages.CourseGetByIdSuccessMessage);
     }
     public async Task<IResult> CreateAsync(CreateCourseDto entity)
     {
-        //var createdCourse = new Course
-        //{
-        //    CourseName = entity.CourseName,
-        //    CreatedDate = entity.CreatedDate,
-        //    EndDate = entity.EndDate,
-        //    InstructorID = entity.InstructorID,
-        //    IsActive = entity.IsActive,
-        //    StartDate = entity.StartDate,
-        //};
-
         var course = _mapper.Map<Course>(entity);
 
         await _unitOfWork.Courses.CreateAsync(course);
@@ -94,12 +78,10 @@ public class CourseManager : ICourseService
     }
     public async Task<IResult> Remove(DeleteCourseDto entity)
     {
-        var deletedCourse = new Course
-        {
-            ID = entity.Id,
-        };
-        _unitOfWork.Courses.Remove(deletedCourse);
+        _unitOfWork.Courses.Remove(_mapper.Map<Course>(entity));
+
         var result = await _unitOfWork.CommitAsync();
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.CourseDeleteSuccessMessage);
@@ -111,51 +93,52 @@ public class CourseManager : ICourseService
     public async Task<IResult> Update(UpdateCourseDto entity)
     {
         var updatedCourse = await _unitOfWork.Courses.GetByIdAsync(entity.Id);
-        if (updatedCourse == null)
-        {
-            return new ErrorResult(ConstantsMessages.CourseUpdateFailedMessage);
-        }
 
-        updatedCourse.CourseName = entity.CourseName;
-        updatedCourse.StartDate = entity.StartDate;
-        updatedCourse.EndDate = entity.EndDate;
-        updatedCourse.InstructorID = entity.InstructorID;
-        updatedCourse.IsActive = entity.IsActive;
+        if (updatedCourse == null)
+            return new ErrorResult(ConstantsMessages.CourseUpdateFailedMessage);
+
+        _mapper.Map(entity, updatedCourse);
 
         _unitOfWork.Courses.Update(updatedCourse);
+
         var result = await _unitOfWork.CommitAsync();
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.CourseUpdateSuccessMessage);
         }
+
         return new ErrorResult(ConstantsMessages.CourseUpdateFailedMessage);
     }
 
     public async Task<IDataResult<IEnumerable<GetAllCourseDetailDto>>> GetAllCourseDetail(bool track = true)
     {
-        // ZOR: N+1 Problemi - Include kullanılmamış, lazy loading aktif
+        // TAMAMLANDI-ZOR: N+1 Problemi - Include kullanılmamış, lazy loading aktif - Repository sorgusu güncellendi.
         var courseListDetailList = await _unitOfWork.Courses.GetAllCourseDetail(false).ToListAsync();
 
         if (courseListDetailList is null)
             throw new NullReferenceException(ConstantsMessages.CourseGetByIdFailedMessage);
 
-        // ZOR: N+1 - Her course için Instructor ayrı sorgu ile çekiliyor (x.Instructor?.Name)
-        var courseDetailDtoList  = courseListDetailList.Select(x => new GetAllCourseDetailDto
-        {
-            CourseName = x.CourseName,
-            StartDate = x.StartDate,
-            EndDate = x.EndDate,
-            CreatedDate = x.CreatedDate,
-            Id = x.ID,
-            InstructorID = x.InstructorID,
-            // ZOR: N+1 - Her course için ayrı Instructor sorgusu
-            InstructorName = x.Instructor?.Name ?? "", // Lazy loading aktif - her iterasyonda DB sorgusu
-            IsActive = x.IsActive,
-        });
+        var result = _mapper.Map<IEnumerable<GetAllCourseDetailDto>>(courseListDetailList);
 
-        var firstDetail = courseDetailDtoList.First();
+        // DEAD CODE //
+        //// TAMAMLANDI-ZOR: N+1 - Her course için Instructor ayrı sorgu ile çekiliyor (x.Instructor?.Name) - İlgili sorgulama güncellendi.
+        //var courseDetailDtoList  = courseListDetailList.Select(x => new GetAllCourseDetailDto
+        //{
+        //    CourseName = x.CourseName,
+        //    StartDate = x.StartDate,
+        //    EndDate = x.EndDate,
+        //    CreatedDate = x.CreatedDate,
+        //    Id = x.ID,
+        //    InstructorID = x.InstructorID,
+        //    // TAMAMLANDI-ZOR: N+1 - Her course için ayrı Instructor sorgusu - İlgili sorgulama güncellendi.
+        //    InstructorName = x.Instructor?.Name ?? "", // Lazy loading aktif - her iterasyonda DB sorgusu
+        //    IsActive = x.IsActive,
+        //});
 
-        return new SuccessDataResult<IEnumerable<GetAllCourseDetailDto>>(courseDetailDtoList, ConstantsMessages.CourseDetailsFetchedSuccessfully);
+        //var firstDetail = courseDetailDtoList.First();
+
+        return new SuccessDataResult<IEnumerable<GetAllCourseDetailDto>>(result, ConstantsMessages.CourseDetailsFetchedSuccessfully);
     }
 
     private IResult CourseNameIsNullOrEmpty(string courseName)

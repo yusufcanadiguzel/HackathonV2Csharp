@@ -52,9 +52,11 @@ public class LessonsManager : ILessonService
 
         // TAMAMLANDI: Null reference - Değişken kullanılmadığı için kaldırıldı fakat gerekmesi durumunda sorun Title? değiştirilerek ve Create esnasında yapılacak validasyon ile çözülebilir. -> var lessonName = createdLesson.Title;
 
-        // ZOR: Async/await anti-pattern - GetAwaiter().GetResult() deadlock'a sebep olabilir
-        _unitOfWork.Lessons.CreateAsync(createdLesson).GetAwaiter().GetResult(); // ZOR: Anti-pattern
+        // TAMAMLANDI-ZOR: Async/await anti-pattern - İlgili kod await eklenerek güncellendi.
+        await _unitOfWork.Lessons.CreateAsync(createdLesson);
+
         var result = await _unitOfWork.CommitAsync();
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.LessonCreateSuccessMessage);
@@ -97,13 +99,13 @@ public class LessonsManager : ILessonService
 
     public async Task<IDataResult<IEnumerable<GetAllLessonDetailDto>>> GetAllLessonDetailAsync(bool track = true)
     {
-        // ZOR: N+1 Problemi - Include kullanılmamış, lazy loading aktif
+        // TAMAMLANDI-ZOR: N+1 Problemi - Sorguda include kullanılıyor.
         var lessonList = await _unitOfWork.Lessons.GetAllLessonDetails(false).ToListAsync();
 
         if (lessonList == null || !lessonList.Any())
-            return new ErrorDataResult<IEnumerable<GetAllLessonDetailDto>>(null, ConstantsMessages.LessonListFailedMessage);
+            return new ErrorDataResult<IEnumerable<GetAllLessonDetailDto>>(Enumerable.Empty<GetAllLessonDetailDto>(), ConstantsMessages.LessonListFailedMessage);
 
-        // ZOR: N+1 - Her lesson için Course ayrı sorgu ile çekiliyor (lesson.Course?.CourseName)
+        // TAMAMLANDI-ZOR: N+1 - Her lesson için Course ayrı sorgu ile çekiliyor - Include ile sorgu tek seferde gerçekleşiyor.
         var lessonsListMapping = _mapper.Map<IEnumerable<GetAllLessonDetailDto>>(lessonList);
 
         // TAMAMLANDI-ORTA: Null reference - Gerekli kontrol eklendi.

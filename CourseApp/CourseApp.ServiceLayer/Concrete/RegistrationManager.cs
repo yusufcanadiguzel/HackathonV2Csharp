@@ -44,9 +44,11 @@ public class RegistrationManager : IRegistrationService
 
         // TAMAMLANDI-ORTA: Null reference - Değişken kullanılmadığı için kaldırıldı fakat ihtiyaç olması durumunda kullanılacak validator hazırlandı. -> var registrationPrice = createdRegistration.Price;
 
-        // ZOR: Async/await anti-pattern - GetAwaiter().GetResult() deadlock'a sebep olabilir
-        _unitOfWork.Registrations.CreateAsync(createdRegistration).GetAwaiter().GetResult(); // ZOR: Anti-pattern
+        // TAMAMLANDI-ZOR: Async/await anti-pattern - İlgili kod güncellendi.
+        await _unitOfWork.Registrations.CreateAsync(createdRegistration);
+
         var result = await _unitOfWork.CommitAsync();
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.RegistrationCreateSuccessMessage);
@@ -89,11 +91,8 @@ public class RegistrationManager : IRegistrationService
 
     public async Task<IDataResult<IEnumerable<GetAllRegistrationDetailDto>>> GetAllRegistrationDetailAsync(bool track = true)
     {
-        // ZOR: N+1 Problemi - Include kullanılmamış, lazy loading aktif
+        // TAMANLANDI-ZOR: N+1 Problemi - Include kullanılmamış - Repository sorgusu include ile yapılmakta.
         var registrationData = await _unitOfWork.Registrations.GetAllRegistrationDetail(track).ToListAsync();
-        
-        // ZOR: N+1 - Her registration için Course ve Student ayrı sorgu ile çekiliyor
-        // Örnek: registration.Course?.CourseName her iterasyonda DB sorgusu
         
         if(registrationData == null || !registrationData.Any())
             return new ErrorDataResult<IEnumerable<GetAllRegistrationDetailDto>>(null, ConstantsMessages.RegistrationListFailedMessage);
@@ -108,7 +107,14 @@ public class RegistrationManager : IRegistrationService
 
     public async Task<IDataResult<GetByIdRegistrationDetailDto>> GetByIdRegistrationDetailAsync(string id, bool track = true)
     {
-        // ZOR: Eksik implementasyon - Metodun içeriği eksik
-        throw new NotImplementedException();
+        // TAMAMLANDI-ZOR: Eksik implementasyon - İmplementasyon eklendi.
+        var registrationData = await _unitOfWork.Registrations.GetByIdRegistrationDetail(id, track);
+
+        if (registrationData is null)
+            return new ErrorDataResult<GetByIdRegistrationDetailDto>(null, ConstantsMessages.RegistrationGetByIdFailedMessage);
+
+        var result = _mapper.Map<GetByIdRegistrationDetailDto>(registrationData);
+
+        return new SuccessDataResult<GetByIdRegistrationDetailDto>(result, ConstantsMessages.RegistrationGetByIdSuccessMessage);
     }
 }

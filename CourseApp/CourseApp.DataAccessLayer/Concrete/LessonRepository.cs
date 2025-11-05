@@ -16,10 +16,12 @@ public class LessonRepository : GenericRepository<Lesson>, ILessonRepository
     public IQueryable<Lesson> GetAllLessonDetails(bool track = true)
     {
         var query = _DbSet.AsQueryable();   
+
         if(!track)
         {
             query = query.AsNoTracking();
         }
+
         return query.Include(l => l.Course);
     }
 

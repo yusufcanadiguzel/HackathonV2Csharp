@@ -56,5 +56,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// ZOR: Memory leak - app Dispose edilmiyor ama burada normal (app.Run() son satır)
+// TAMAMLANDI-ZOR: Memory leak - app Dispose edilmiyor ama burada normal - IDisposable olduğu için leak oluşmaz.
 app.Run();

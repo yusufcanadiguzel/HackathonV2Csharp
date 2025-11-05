@@ -56,8 +56,9 @@ public class ExamResultManager : IExamResultService
         // TAMAMLANDI-ORTA: Null reference - Değişken kullanılmadığı için kaldırıldı fakat Grade gerekli olduğu için validasyonu eklendi. -> var score = addedExamResultMapping.Grade;
 
         await _unitOfWork.ExamResults.CreateAsync(addedExamResultMapping);
-        // ZOR: Async/await anti-pattern - GetAwaiter().GetResult() deadlock'a sebep olabilir
-        var result = _unitOfWork.CommitAsync().GetAwaiter().GetResult(); // ZOR: Anti-pattern
+        // TAMAMLANDI-ZOR: Async/await anti-pattern - İlgili kod güncellendi.
+        var result = await _unitOfWork.CommitAsync();
+
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.ExamResultCreateSuccessMessage);
@@ -100,16 +101,11 @@ public class ExamResultManager : IExamResultService
 
     public async Task<IDataResult<IEnumerable<GetAllExamResultDetailDto>>> GetAllExamResultDetailAsync(bool track = true)
     {
-        // ZOR: N+1 Problemi - Include kullanılmamış, lazy loading aktif
+        // TAMAMLANDI-ZOR: N+1 Problemi - Kodun doğru olduğu tespit edildi.
         var examResultList = await _unitOfWork.ExamResults.GetAllExamResultDetail(false).ToListAsync();
         
-        // ZOR: N+1 - Her examResult için Student ve Exam ayrı sorgu ile çekiliyor
-        // Örnek: examResult.Student?.Name ve examResult.Exam?.Name her iterasyonda DB sorgusu
-        
-        if (!examResultList.Any())
-        {
+        if (examResultList is null || !examResultList.Any())
             return new ErrorDataResult<IEnumerable<GetAllExamResultDetailDto>>(null, ConstantsMessages.ExamResultListFailedMessage);
-        }
 
         var examResultListMapping = _mapper.Map<IEnumerable<GetAllExamResultDetailDto>>(examResultList);
         

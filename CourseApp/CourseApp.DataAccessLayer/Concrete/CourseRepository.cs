@@ -12,13 +12,8 @@ public class CourseRepository : GenericRepository<Course>, ICourseRepository
         _context = context;
     }
 
-    public IQueryable<Course> GetAllCourseDetail(bool track = true)
-    {
-        var query = _context.Courses.AsQueryable();
-        if(!track)
-        {
-            query = query.AsNoTracking();
-        }
-        return query.Include(c => c.Instructor);
-    }
+    public IQueryable<Course> GetAllCourseDetail(bool track = true) =>
+        track
+        ? _context.Courses.Include(c => c.Instructor)
+        : _context.Courses.Include(c => c.Instructor).AsNoTracking();
 }

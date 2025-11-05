@@ -7,7 +7,7 @@ namespace CourseApp.DataAccessLayer.Concrete;
 public class ExamResultRepository : GenericRepository<ExamResult>, IExamResultRepository
 {
     private readonly AppDbContext _context;
-    private  DbSet<ExamResult> _dbSet => _context.Set<ExamResult>();
+    private DbSet<ExamResult> _dbSet => _context.Set<ExamResult>();
     public ExamResultRepository(AppDbContext context) : base(context)
     {
         _context = context;
@@ -16,10 +16,10 @@ public class ExamResultRepository : GenericRepository<ExamResult>, IExamResultRe
     public IQueryable<ExamResult> GetAllExamResultDetail(bool track = true)
     {
         var query = _dbSet.AsQueryable();
-        if(!track)
-        {
+
+        if (!track)
             query = query.AsNoTracking();
-        }
+
         return query.Include(er => er.Student)
                     .Include(er => er.Exam);
     }
@@ -27,10 +27,9 @@ public class ExamResultRepository : GenericRepository<ExamResult>, IExamResultRe
     public async Task<ExamResult> GetByIdExamResultDetailAsync(string id, bool track = true)
     {
         var query = _dbSet.AsQueryable();
+
         if (!track)
-        {
             query = query.AsNoTracking();
-        }
 
         return (await query.Include(er => er.Student)
                             .Include(er => er.Exam)

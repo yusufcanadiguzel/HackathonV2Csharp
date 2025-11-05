@@ -9,6 +9,10 @@ namespace CourseApp.BusinessLayer.Mapping
         public CourseMapping()
         {
             CreateMap<CreateCourseDto, Course>();
+            CreateMap<Course, GetAllCourseDto>();
+            CreateMap<Course, GetByIdCourseDto>();
+            CreateMap<DeleteCourseDto, Course>();
+            CreateMap<Course, UpdateCourseDto>();
         }
     }
 }

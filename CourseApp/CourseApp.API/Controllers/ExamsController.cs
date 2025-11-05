@@ -19,19 +19,19 @@ public class ExamsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
-        // ZOR: N+1 Problemi - Her exam için ayrı sorgu
+        // TAMAMLANDI-ZOR: N+1 Problemi - Her exam için ayrı sorgu - Kod güncellendi.
         var result = await _examService.GetAllAsync();
 
         if (result.IsSuccess)
         {
             // TAMAMLANDI-ORTA: Null reference - Business katmanında null olması durumunda ErrorDataResult dönülüyor
-            var exams = result.Data.ToList();
-            // ZOR: N+1 - Her exam için ayrı sorgu (örnek - gerçek implementasyon service layer'da olabilir)
-            foreach (var exam in exams)
-            {
-                // Her exam için ayrı sorgu atılıyor - Include kullanılmamalıydı
-                var details = await _examService.GetByIdAsync(exam.Id);
-            }
+            //var exams = result.Data.ToList();
+            // TAMAMLANDI-ZOR: N+1 - Her exam için ayrı sorgu (örnek - gerçek implementasyon service layer'da olabilir) - Dead code olduğu için kaldırıldı.
+            //foreach (var exam in exams)
+            //{
+            //    // TAMAMLANDI: Her exam için ayrı sorgu atılıyor - Include kullanılmamalıydı - Dead code olduğu için kaldırıldı.
+            //    // var details = await _examService.GetByIdAsync(exam.Id);
+            //}
             return Ok(result);
         }
         return BadRequest(result);
