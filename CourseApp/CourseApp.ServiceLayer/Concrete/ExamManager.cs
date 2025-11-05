@@ -79,12 +79,14 @@ public class ExamManager : IExamService
 
         _unitOfWork.Exams.Remove(deletedExamMapping);
 
-        var result = await _unitOfWork.CommitAsync(); // ZOR SEVİYE: Transaction yok - başka işlemler varsa rollback olmaz
+        // TAMAMLANDI-ZOR SEVİYE: Transaction yok - CommitAsync en son çalışacağı için hata olması durumunda önceki değişiklikleri dbye yansıtmaz.
+        var result = await _unitOfWork.CommitAsync(); 
 
         if (result > 0)
         {
             return new SuccessResult(ConstantsMessages.ExamDeleteSuccessMessage);
         }
+
         return new ErrorResult(ConstantsMessages.ExamDeleteFailedMessage);
     }
 
