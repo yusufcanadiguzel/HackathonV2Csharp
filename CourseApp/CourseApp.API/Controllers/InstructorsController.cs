@@ -11,12 +11,10 @@ namespace CourseApp.API.Controllers;
 public class InstructorsController : ControllerBase
 {
     private readonly IInstructorService _instructorService;
-    private readonly IValidator<CreatedInstructorDto> _createdInstructorValidator;
 
-    public InstructorsController(IInstructorService instructorService, IValidator<CreatedInstructorDto> createdInstructorValidator)
+    public InstructorsController(IInstructorService instructorService)
     {
         _instructorService = instructorService;
-        _createdInstructorValidator = createdInstructorValidator;
     }
 
     [HttpGet]
@@ -51,20 +49,17 @@ public class InstructorsController : ControllerBase
         // TAMAMLANDI-ORTA: Null check eksik - Gerekli kontrol eklendi
         if (createdInstructorDto is null)
             return BadRequest(ConstantsMessages.InstructorNotNullMessage);
-
-        var validationResult = await _createdInstructorValidator.ValidateAsync(createdInstructorDto);
-
-        if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
-
-        // TAMAMLANDI-ORTA: Gerekli validasyon eklendi.
+        
+        /* Dead Code oldukları için kaldırıldılar. Kullanılması durumunda service'te kullanmak için gerekli validator hazırlandı.
+        TAMAMLANDI-ORTA: Gerekli validasyon eklendi.
         var instructorName = createdInstructorDto.Name;
 
-        // TAMAMLANDI-ORTA: Gerekli validasyon eklendi.
-        var firstChar = instructorName[0]; // IndexOutOfRangeException riski
+        TAMAMLANDI-ORTA: Gerekli validasyon eklendi.
+        var firstChar = instructorName[0];
 
-        // TAMAMLANDI-ORTA: Tip dönüşüm hatası - İstenilen işlem için gerekli property(age) mevcut olmadığı için kaldırıldı.
-        
+        TAMAMLANDI-ORTA: Tip dönüşüm hatası - İstenilen işlem için gerekli property(age) mevcut olmadığı için kaldırıldı.
+        */
+
         var result = await _instructorService.CreateAsync(createdInstructorDto);
         if (result.IsSuccess)
         {
