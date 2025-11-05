@@ -1,7 +1,7 @@
 ﻿namespace CourseApp.EntityLayer.Dto.ExamDto;
 
-public class CreateExamDto
+public record CreateExamDto
 {
-    public string? Name { get; set; }
-    public DateTime Date { get; set; }
+    public string? Name { get; init; }
+    public DateTime Date { get; init; }
 }

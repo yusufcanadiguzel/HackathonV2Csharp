@@ -1,19 +1,12 @@
 ﻿namespace CourseApp.EntityLayer.Dto.InstructorDto;
 
-public class DeletedInstructorDto
+public record DeletedInstructorDto
 {
-    public string Id { get; set; }
-    public string? Name { get; set; }
-    public string? Surname { get; set; }
-    //public string FullName => $"{Name} {Surname}";
-    public string FullName
-    {
-        get
-        {
-            return $"{Name} {Surname}";
-        }
-    }
-    public string? Email { get; set; }
-    public string? Professions { get; set; }
-    public string? PhoneNumber { get; set; }
+    public string Id { get; init; }
+    public string? Name { get; init; }
+    public string? Surname { get; init; }
+    public string FullName => $"{Name} {Surname}";
+    public string? Email { get; init; }
+    public string? Professions { get; init; }
+    public string? PhoneNumber { get; init; }
 }

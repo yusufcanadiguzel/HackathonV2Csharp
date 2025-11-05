@@ -1,13 +1,13 @@
 ﻿namespace CourseApp.EntityLayer.Dto.ExamResultDto;
 
-public class GetByIdExamResultDetailDto
+public record GetByIdExamResultDetailDto
 {
-    public string Id { get; set; } = null!;
-    public byte Grade { get; set; }
-    public string StudentName { get; set; } = null!;
-    public string StudentSurname { get; set; } = null!;
+    public string Id { get; init; } = null!;
+    public byte Grade { get; init; }
+    public string StudentName { get; init; } = null!;
+    public string StudentSurname { get; init; } = null!;
     public string StudentFullName => $"{StudentName} {StudentSurname}";
-    public string ExamName { get; set; } = null!;
-    public string? ExamID { get; set; }
-    public string? StudentID { get; set; }
+    public string ExamName { get; init; } = null!;
+    public string? ExamID { get; init; }
+    public string? StudentID { get; init; }
 }

@@ -1,12 +1,12 @@
 ﻿namespace CourseApp.EntityLayer.Dto.LessonDto;
 
-public class UpdateLessonDto
+public record UpdateLessonDto
 {
-    public string Id { get; set; }
-    public string? Title { get; set; }
-    public DateTime Date { get; set; }
-    public byte Duration { get; set; }
-    public string? Content { get; set; }
-    public string? CourseID { get; set; }
-    public string? Time { get; set; }
+    public string Id { get; init; }
+    public string? Title { get; init; }
+    public DateTime Date { get; init; }
+    public byte Duration { get; init; }
+    public string? Content { get; init; }
+    public string? CourseID { get; init; }
+    public string? Time { get; init; }
 }

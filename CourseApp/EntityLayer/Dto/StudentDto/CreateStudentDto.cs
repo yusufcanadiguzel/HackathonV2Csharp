@@ -1,10 +1,10 @@
 ﻿namespace CourseApp.EntityLayer.Dto.StudentDto;
 
-public class CreateStudentDto
+public record CreateStudentDto
 {
-    public string? Name { get; set; }
-    public string? Surname { get; set; }
+    public string? Name { get; init; }
+    public string? Surname { get; init; }
     public string? Fullname => $"{Name} {Surname}";
-    public DateTime BirthDate { get; set; }
-    public string? TC { get; set; }
+    public DateTime BirthDate { get; init; }
+    public string? TC { get; init; }
 }

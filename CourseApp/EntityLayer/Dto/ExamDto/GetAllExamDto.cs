@@ -1,8 +1,8 @@
 ﻿namespace CourseApp.EntityLayer.Dto.ExamDto;
 
-public class GetAllExamDto
+public record GetAllExamDto
 {
-    public string Id { get; set; }
-    public string? Name { get; set; }
-    public DateTime Date { get; set; }
+    public string Id { get; init; }
+    public string? Name { get; init; }
+    public DateTime Date { get; init; }
 }

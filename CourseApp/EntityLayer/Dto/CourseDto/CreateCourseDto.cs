@@ -2,13 +2,13 @@
 
 namespace CourseApp.EntityLayer.Dto.CourseDto;
 
-public class CreateCourseDto
+public record CreateCourseDto
 {
-    public bool IsActive { get; set; } = false;
-    public DateTime CreatedDate { get; set; } = DateTime.Now;
-    public string? CourseName { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public string? InstructorID { get; set; }
-    public string? InstructorName { get; set; }
+    public bool IsActive { get; init; } = false;
+    public DateTime CreatedDate { get; init; } = DateTime.Now;
+    public string? CourseName { get; init; }
+    public DateTime StartDate { get; init; }
+    public DateTime EndDate { get; init; }
+    public string? InstructorID { get; init; }
+    public string? InstructorName { get; init; }
 }

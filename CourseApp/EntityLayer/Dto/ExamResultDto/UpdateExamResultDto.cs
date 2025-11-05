@@ -1,9 +1,9 @@
 ﻿namespace CourseApp.EntityLayer.Dto.ExamResultDto;
 
-public class UpdateExamResultDto
+public record UpdateExamResultDto
 {
-    public string Id { get; set; } = null!;
-    public byte Grade { get; set; }
-    public string? ExamID { get; set; }
-    public string? StudentID { get; set; }
+    public string Id { get; init; } = null!;
+    public byte Grade { get; init; }
+    public string? ExamID { get; init; }
+    public string? StudentID { get; init; }
 }
